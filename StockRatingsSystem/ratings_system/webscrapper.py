@@ -9,9 +9,11 @@ import pandas as pd
 
 # create a webdriver object and set options for headless browsing
 def load_webdriver():
-    options = Options()
-    options.headless = True
-    driver = webdriver.Chrome('./chromedriver', options=options)
+    options = webdriver.ChromeOptions()
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    options.add_argument("--disable-dev-shm-usage");
+    driver = webdriver.Chrome(chrome_options=options)
     return driver
 
 
@@ -33,6 +35,7 @@ def get_js_soup(url_web, driver):
     time.sleep(5)
     res_html = driver.execute_script('return document.body.innerHTML')
     soup_obj = BeautifulSoup(res_html, 'html.parser')  # beautiful soup object to be used for parsing html content
+    # print(soup_obj)
     return soup_obj
 
 
@@ -57,9 +60,8 @@ def get_mb_url(market, stock_symbol):
 
 # Main function
 
-def main():
-    market = "NASDAQ"
-    stock_symbol = "AAPL"
+def main(market, stock_symbol):
+
 
     # get MarketBeat URL
     url_mb = get_mb_url(market, stock_symbol)
@@ -118,11 +120,16 @@ def main():
 
         print("total no of relevant rows: ", df_current_month_desc.shape)
 
-        json_obj = df_current_month_desc.to_json(orient='records', date_format='iso')
+        result = [[stock_symbol, market, df_current_month_desc]]
+        df_result = pd.DataFrame(result, columns=['stock_symbol', 'market', 'ratings'])
+
+        json_obj = df_result.to_json(orient='records', date_format='iso')
 
         print(json_obj)
         return json_obj
 
 
 if __name__ == '__main__':
-    main()
+    market = "NASDAQ"
+    stock_symbol = "AAPL"
+    main(market, stock_symbol)
