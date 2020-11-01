@@ -53,3 +53,26 @@ Subsequent respose definition will only detail the expected value of the `data f
         "averageRating": 1.0
 }
 ```
+
+**Definition**
+
+`GET /requests/all`
+
+**Response**
+
+- `200 OK` on success
+
+```json
+[
+    {
+        "datetime" : "2020-10-31, 21.00.00",
+        "stock_symbol":"AAPL",
+        "market": "NASDAQ"
+    },
+    {
+        "datetime" : "2020-10-31, 21.00.00",
+        "stock_symbol":"FB",
+        "Market": "NASDAQ"
+    }
+]
+```
