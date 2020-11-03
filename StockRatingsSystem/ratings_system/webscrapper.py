@@ -216,7 +216,13 @@ def main(market, stock_symbol):
         column_list[2]: today_date
     }
 
-    data_from_db = dbo.read_ratings_db(search_dict)
+    col_hide_dict = {
+        "_id": 0,
+        "index": 0,
+        "analysts ratings.index": 0
+    }
+
+    data_from_db = dbo.read_ratings_db(search_dict, col_hide_dict)
 
     if not bool(data_from_db):
         # if not present in db, get the data via web

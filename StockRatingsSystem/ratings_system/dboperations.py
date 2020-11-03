@@ -46,9 +46,9 @@ def read_all_ratings_db():
 
 # read all ratings items in requestlogdb db with matching criteria
 
-def read_ratings_db(search_dict):
+def read_ratings_db(search_dict, col_hide_dict):
     db = client.ratingsdb
     print("search criteria: ", search_dict)
-    _items = list(db.ratingsdb.find(search_dict, {"_id": 0}))
+    _items = list(db.ratingsdb.find(search_dict, col_hide_dict))
     print("_items", _items)
     return _items
