@@ -1,4 +1,7 @@
+import json
+
 from bs4 import BeautifulSoup
+from flask import jsonify, make_response
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import re
@@ -166,11 +169,12 @@ def scrape_web(market, stock_symbol):
         current_month_mask = df_rel['date'].map(lambda x: x.strftime("%Y-%m")) == current_month
         df_current_month_desc = df_rel[current_month_mask].sort_values(by=['date'], ascending=False)
 
-        if df_current_month_desc.empty:
+        if df_current_month_desc.empty or df_current_month_desc.shape[0] < 5:
             now = datetime.now()
             last_month = now.month - 1 if now.month > 1 else 12
             last_month_mask = df_rel['date'].map(lambda x: x.strftime("%Y-%m")) == str(now.year) + "-" + str(last_month)
-            df_current_month_desc = df_rel[last_month_mask].sort_values(by=['date'], ascending=False)
+            df_last_month_desc = df_rel[last_month_mask].sort_values(by=['date'], ascending=False)
+            df_current_month_desc = df_current_month_desc.append(df_last_month_desc)
 
         # move date column as first column first
         cols = list(df_current_month_desc)
@@ -185,34 +189,59 @@ def scrape_web(market, stock_symbol):
         # convert date
         df_current_month_desc['date'] = df_current_month_desc['date'].apply(lambda x: str(x.strftime("%Y-%m-%d")))
 
-        # df_current_month_desc['refresh date'] = str(date.today())
+        # consider only max 10 ratings
 
-        return df_current_month_desc
+        return df_current_month_desc[:10]
+
+
+def scrape_web_t(market, stock_symbol):
+    test_data = [['2020-10-17', 'TEST ANALYST 1', 'BUY'], ['2020-10-17', 'TEST ANALYST 2', 'SELL']]
+
+    df_test = pd.DataFrame(test_data, columns=['date', "analyst", "rating"])
+    return df_test
 
 
 # Main function
 
 def main(market, stock_symbol):
     # check db first
-    column_name = 'last refresh date'
-    search_criteria = str(date.today())
-    data_from_db = dbo.read_ratings_db(column_name, search_criteria)
-    df = pd.DataFrame(data_from_db["data"])
-    # df.set_index("Date", inplace=True)
 
-    if df.empty:
+    column_list = ['stock_symbol', 'market', 'refresh date', 'overall rating', 'analysts ratings']
+
+    today_date = str(date.today())
+
+    search_dict = {
+        column_list[0]: stock_symbol,
+        column_list[1]: market,
+        column_list[2]: today_date
+    }
+
+    data_from_db = dbo.read_ratings_db(search_dict)
+
+    if not bool(data_from_db):
         # if not present in db, get the data via web
         df = scrape_web(market, stock_symbol)
-        dbo.insert_ratings_db(df);
+        overall_ratings = calculate_overall_ratings(df)
+
+        df.reset_index(inplace=True)
+        data_dict_df = df.to_dict("records")
+        print(data_dict_df)
+
+        result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
+        df_result = pd.DataFrame(result, columns=column_list)
+
+        df_result.reset_index(inplace=True)
+        result_doc = df_result.to_dict("records")
+
+        dbo.insert_ratings_db(result_doc);
+
+        json_obj = df_result.to_json(orient='records', date_format='iso')
+
         print('data read from webscrapper')
     else:
+        result_doc = data_from_db
+        json_obj = json.dumps(result_doc)
         print('data read from db')
-
-    overall_ratings = calculate_overall_ratings(df)
-    result = [[stock_symbol, market, overall_ratings, df]]
-    df_result = pd.DataFrame(result, columns=['stock_symbol', 'market', 'overall rating', 'analysts ratings'])
-
-    json_obj = df_result.to_json(orient='records', date_format='iso')
 
     # print(json_obj)
     return json_obj
