@@ -10,6 +10,7 @@ from ratings_system import dboperations as dbo
 # create an instance of Flask
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+app.config["MONGO_URI"] = "mongodb://localhost:27017"
 
 
 # print(os.environ)

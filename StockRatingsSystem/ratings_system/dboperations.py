@@ -6,7 +6,8 @@ import pandas as pd
 
 # mongo db client
 # client = MongoClient(os.environ['stockratingssystem_db_1_PORT_27017_TCP_ADDR'], 27017)
-client = MongoClient(host=['172.27.0.2:27017'])
+# client = MongoClient(host=['172.27.0.2:27017'])
+client = MongoClient(host=['db:27017'])
 
 
 # insert request item in requestlogdb db
