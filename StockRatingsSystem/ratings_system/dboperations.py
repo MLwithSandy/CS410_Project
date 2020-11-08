@@ -20,9 +20,9 @@ def insert_request_log_db(request_item_do):
 
 # read all request items from requestlogdb db
 
-def read_all_request_log_db():
+def read_all_request_log_db(col_hide_dict):
     db = client.requestlogdb
-    _items = db.requestlogdb.find()
+    _items = db.requestlogdb.find({}, col_hide_dict)
     return _items
 
 

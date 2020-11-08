@@ -109,7 +109,7 @@ def calculate_overall_ratings(df_calc):
     df_temp = df_calc.copy();
 
     # scale ratings from various analysts on scale of {-1, 0, 1}
-    df_temp['new_ratings'] = df_calc['rating'].map(lambda x: scale_ratings(x))
+    df_temp['new_ratings'] = df_calc['ratingAssigned'].map(lambda x: scale_ratings(x))
 
     # average rating
     average_rating = round(df_temp['new_ratings'].mean(), 0)
@@ -137,7 +137,7 @@ def scrape_web(market, stock_symbol):
     # Get the ratings data
 
     data = []
-    data_header = ["Date [MM/dd/YYYY]", "analyst", "Action", "rating", "Price target", "Price impact"]
+    data_header = ["Date [MM/dd/YYYY]", "ratingAgency", "Action", "ratingAssigned", "Price target", "Price impact"]
     dropped_columns = ["Date [MM/dd/YYYY]", "Action", "Price target", "Price impact"]
 
     table = soup_obj.find("table", attrs={"class": "scroll-table sort-table fixed-left-column fixed-header"})
@@ -156,9 +156,9 @@ def scrape_web(market, stock_symbol):
         df = pd.DataFrame(data).dropna();
         df.columns = data_header
         # add new column with date
-        df['date'] = pd.to_datetime(df['Date [MM/dd/YYYY]'],
-                                    format="%m/%d/%Y",
-                                    errors='coerce')
+        df['ratingDate'] = pd.to_datetime(df['Date [MM/dd/YYYY]'],
+                                          format="%m/%d/%Y",
+                                          errors='coerce')
         print("total no of rows: ", df.shape)
 
         # drop unnecessary columns from dataframe
@@ -166,14 +166,15 @@ def scrape_web(market, stock_symbol):
 
         # create mask to filter current month data only
         current_month = datetime.now().strftime("%Y-%m")
-        current_month_mask = df_rel['date'].map(lambda x: x.strftime("%Y-%m")) == current_month
-        df_current_month_desc = df_rel[current_month_mask].sort_values(by=['date'], ascending=False)
+        current_month_mask = df_rel['ratingDate'].map(lambda x: x.strftime("%Y-%m")) == current_month
+        df_current_month_desc = df_rel[current_month_mask].sort_values(by=['ratingDate'], ascending=False)
 
         if df_current_month_desc.empty or df_current_month_desc.shape[0] < 5:
             now = datetime.now()
             last_month = now.month - 1 if now.month > 1 else 12
-            last_month_mask = df_rel['date'].map(lambda x: x.strftime("%Y-%m")) == str(now.year) + "-" + str(last_month)
-            df_last_month_desc = df_rel[last_month_mask].sort_values(by=['date'], ascending=False)
+            last_month_mask = df_rel['ratingDate'].map(lambda x: x.strftime("%Y-%m")) == str(now.year) + "-" + str(
+                last_month)
+            df_last_month_desc = df_rel[last_month_mask].sort_values(by=['ratingDate'], ascending=False)
             df_current_month_desc = df_current_month_desc.append(df_last_month_desc)
 
         # move date column as first column first
@@ -187,7 +188,8 @@ def scrape_web(market, stock_symbol):
         print("total no of relevant rows: ", df_current_month_desc.shape)
 
         # convert date
-        df_current_month_desc['date'] = df_current_month_desc['date'].apply(lambda x: str(x.strftime("%Y-%m-%d")))
+        df_current_month_desc['ratingDate'] = df_current_month_desc['ratingDate'].apply(
+            lambda x: str(x.strftime("%Y-%m-%d")))
 
         # consider only max 10 ratings
 
@@ -197,7 +199,7 @@ def scrape_web(market, stock_symbol):
 def scrape_web_t(market, stock_symbol):
     test_data = [['2020-10-17', 'TEST ANALYST 1', 'BUY'], ['2020-10-17', 'TEST ANALYST 2', 'SELL']]
 
-    df_test = pd.DataFrame(test_data, columns=['date', "analyst", "rating"])
+    df_test = pd.DataFrame(test_data, columns=['ratingDate', "ratingAgency", "ratingAssigned"])
     return df_test
 
 
@@ -206,7 +208,7 @@ def scrape_web_t(market, stock_symbol):
 def main(market, stock_symbol):
     # check db first
 
-    column_list = ['stock_symbol', 'market', 'refresh date', 'overall rating', 'analysts ratings']
+    column_list = ['stockSymbol', 'marketPlace', 'refreshData', 'overallRating', 'analystsRatings']
 
     today_date = str(date.today())
 
@@ -218,8 +220,8 @@ def main(market, stock_symbol):
 
     col_hide_dict = {
         "_id": 0,
-        "index": 0,
-        "analysts ratings.index": 0
+        # "index": 0,
+        # "analystsRatings.index": 0
     }
 
     data_from_db = dbo.read_ratings_db(search_dict, col_hide_dict)

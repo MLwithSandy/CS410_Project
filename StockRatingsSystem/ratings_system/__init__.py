@@ -50,8 +50,14 @@ def rating(market, stock_symbol):
 
 @app.route("/requests/all")
 def request_log_all():
+    col_hide_dict = {
+        "_id": 0,
+        # "index": 0,
+        # "analystsRatings.index": 0
+    }
+
     # read all requests from db
-    _items = dbo.read_all_request_log_db()
+    _items = dbo.read_all_request_log_db(col_hide_dict)
     # items = [item for item in _items]
     resp = dumps(_items)
 

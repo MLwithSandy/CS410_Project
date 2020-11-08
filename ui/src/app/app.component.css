@@ -1,0 +1,59 @@
+:host {
+  background-color: whitesmoke;
+
+  display: grid;
+  height: 100vh;
+
+  grid-template-rows: 1fr 8.8fr 0.2fr;
+  /*"navbar" 100px*/
+  /*"main" auto*/
+  /*"footer" 50px;*/
+  /*;*/
+
+}
+/*:host > * {*/
+/*  background-color: red;*/
+/*  outline-color: red;*/
+/*  outline-width: thick;*/
+/*}*/
+
+.navbarContainer {
+  grid-row: 1;
+}
+
+div {
+  grid-row: 2;
+}
+
+/*.main{*/
+/*  display: grid;*/
+/*  grid-row: 2;*/
+/*  !*grid-template-rows: 1fr 1fr 1fr 1fr;*!*/
+/*  !*grid-template-columns: 1fr;*!*/
+
+/*}*/
+
+/*.content {*/
+/*  padding: 16px;*/
+/*  grid-row: 1;*/
+/*}*/
+
+/*.content > mat-card {*/
+/*  width: 200px;*/
+/*}*/
+
+/*!*.img{*!*/
+/*!*  display: grid;*!*/
+/*!*  place-content: center;*!*/
+/*!*  width: 200px;*!*/
+/*!*  height: 200px;*!*/
+/*!*}*!*/
+
+.footer{
+  display: grid;
+  grid-row: 3;
+  padding-top: 10px;
+
+  place-content: center;
+  font-size: smaller;
+}
