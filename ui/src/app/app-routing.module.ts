@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './home/home.component';
 import {P404Component} from './p404/p404.component';
-import {CustomPreloadingService} from './services/custom-preloading.service';
 
 const appRoutes: Routes = [
   {path: 'home', component: HomeComponent},
@@ -15,7 +14,7 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [],
   imports: [
-    RouterModule.forRoot(appRoutes, {preloadingStrategy: CustomPreloadingService}),
+    RouterModule.forRoot(appRoutes),
     CommonModule
   ],
   exports: [RouterModule]

@@ -1,0 +1,119 @@
+.home {
+  display: grid;
+  height: 100%;
+  grid-gap: 10px;
+  /*grid-template-rows: 1fr 4fr 2.5fr 2.5fr*/
+  grid-template:
+  "a    a   a" 1fr
+  "b    b   b1" 4fr
+  "c    c   c" 2.5fr
+  "d    d   d" 2.5fr
+;
+}
+
+.search {
+  grid-area: b;
+  display: grid;
+  height: 100%;
+  grid-gap: 5px;
+  grid-template:
+  "s1" 0.5fr
+  "s2" 0.5fr
+  "s3" 3fr
+;
+}
+
+.searchInput {
+  grid-area: s1;
+  place-content: center;
+  width: 85%;
+  border-radius: 8px;
+  justify-self: center ;
+
+}
+
+.searchButton {
+  grid-area: s2;
+  display: grid;
+  place-content: center;
+  width: 20%;
+  height: 40px;
+  border-radius: 8px;
+  font-weight: bolder;
+  font-family: Arial;
+  color: white;
+  background-color: darkslategray;
+  justify-self: center ;
+}
+
+.p2 {
+  grid-area: s3;
+
+}
+
+.p1 {
+  grid-area: c;
+}
+
+.ratingChart {
+  grid-area: b1;
+  place-content: center;
+  /* align-self: center; */
+
+}
+
+.grafico .content{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 160px;
+}
+
+.grafico .content span{
+  font-family: 'Roboto';
+  font-size: 13px;
+  color: #707070;
+}
+
+.grafico .line{
+  background-color: #CCCCCC;
+  width: 100%;
+  height: 1px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.grafico .legends{
+  display: flex;
+  flex-direction: row;
+  color: #707070;
+  font-family: 'Roboto';
+  font-size: 12px;
+  text-align: center;
+}
+
+.grafico .legends span{
+  width: 60px;
+  margin:0 15px;
+}
+
+.grafico .bars{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.grafico .bar{
+  width: 60px;
+  min-height: 2px;
+  margin:0 15px;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+.grafico .bar:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 17px rgba(0, 0, 0, 0.20);
+}

@@ -12,11 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {HttpClientModule} from '@angular/common/http';
-import {RatingsService} from './services/ratings.service';
 import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HomeComponent } from './home/home.component';
 import { P404Component } from './p404/p404.component';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -36,9 +36,10 @@ import { P404Component } from './p404/p404.component';
     MatButtonModule,
     FlexLayoutModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
-  providers: [RatingsService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

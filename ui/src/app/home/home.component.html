@@ -1,25 +1,39 @@
-<div>
-<p>home works!</p>
-</div>
+<div class="home">
 
-<!--<div class="main" >-->
-<!--&lt;!&ndash;    <h1>&ndash;&gt;-->
-<!--&lt;!&ndash;      hello world&ndash;&gt;-->
-<!--&lt;!&ndash;    </h1>&ndash;&gt;-->
 
+
+  <p class="p1">home works!</p>
+
+
+  <div class="search">
+    <input class="searchInput form-control-lg" type="text" [(ngModel)]="stockSymbol">
+    <button class="searchButton" (click)="getStockRating()">Search</button>
+  </div>
+
+  <p class="p2">
+    Overall RatingsModel
+  </p>
+
+
+<!--  <div *ngIf="lstLogs">-->
 <!--    <table>-->
 <!--      <tr>-->
 <!--        <th>DateTime</th>-->
 <!--        <th>Symbol</th>-->
 <!--        <th>Market</th>-->
 <!--      </tr>-->
-
 <!--      <tr *ngFor="let log of lstLogs">-->
 <!--        <td>{{log.datetime}}</td>-->
 <!--        <td>{{log.symbol}}</td>-->
 <!--        <td>{{log.market}}</td>-->
 <!--      </tr>-->
 <!--    </table>-->
+<!--  </div>-->
+
+<!--  <p *ngFor="let rating of ratingsList">-->
+<!--    RatingsModel = {{rating.overallRating}}-->
+<!--  </p>-->
+
 <!--&lt;!&ndash;  <div class="cards">&ndash;&gt;-->
 
 <!--&lt;!&ndash;    <mat-toolbar color="primary">&ndash;&gt;-->
@@ -46,3 +60,20 @@
 <!--&lt;!&ndash;  </div>&ndash;&gt;-->
 
 <!--</div>-->
+
+  <div class="ratingChart">
+    <div class="grafico">
+      <div class="content">
+        <div class="bars" *ngFor="let item of List">
+          <span>{{item.value}}</span>
+          <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+        </div>
+      </div>
+      <!--<div class="line"></div>-->
+      <div class="legends">
+        <span *ngFor="let item of List">{{item.legend}}</span>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -3,4 +3,6 @@ export class AnalystsRating{
   ratingDate: string;
   ratingAgency: string;
   ratingAssigned: string;
+  newRatings: number;
+  scaledRatings: string;
 }

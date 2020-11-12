@@ -4,6 +4,8 @@ from bson.json_util import dumps
 import markdown
 import os
 from flask import Flask, Response
+from flask_cors import CORS, cross_origin
+
 from ratings_system import webscrapper as ws
 from ratings_system import dboperations as dbo
 
@@ -11,12 +13,15 @@ from ratings_system import dboperations as dbo
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 app.config["MONGO_URI"] = "mongodb://localhost:27017"
+app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 # print(os.environ)
 
 
 @app.route("/")
+@cross_origin()
 def index():
     """Present readme.md"""
     # Open readme.md file
@@ -30,6 +35,7 @@ def index():
 
 
 @app.route("/stock/ratings/<market>/<stock_symbol>")
+@cross_origin()
 def rating(market, stock_symbol):
     print("market: ", market)
     print("stock_symbol: ", stock_symbol)
@@ -49,6 +55,7 @@ def rating(market, stock_symbol):
 
 
 @app.route("/requests/all")
+@cross_origin()
 def request_log_all():
     col_hide_dict = {
         "_id": 0,
@@ -67,6 +74,7 @@ def request_log_all():
 # read all ratings from db
 
 @app.route("/stock/ratings/all")
+@cross_origin()
 def stocks_all():
     # read all ratings from db
     _items = dbo.read_all_ratings_db()
@@ -77,6 +85,7 @@ def stocks_all():
 
 
 @app.route("/stock/ratings/refresh/<date>")
+@cross_origin()
 def stocks_all_refresh_date(date):
     # read all ratings from db
     column_name = 'last refresh date'

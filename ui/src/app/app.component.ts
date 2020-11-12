@@ -1,26 +1,18 @@
-import {Component, OnChanges, OnInit} from '@angular/core';
-import {RatingsService} from './services/ratings.service';
-import {LogData} from './model/logData';
+import {Component, OnInit} from '@angular/core';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'SRE Stock Recommender Engine';
-  lstLogs: LogData[];
 
-
-  constructor(private ratingsService: RatingsService) {
+  constructor() {
   }
 
   ngOnInit(): void {
-    this.ratingsService.getRatings()
-      .subscribe(
-        data => {
-          this.lstLogs = data;
-        }
-      );
+
   }
 }

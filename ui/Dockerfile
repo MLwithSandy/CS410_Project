@@ -1,16 +1,11 @@
-FROM node:12.13.0
-
-RUN mkdir /usr/src/app
+### STAGE 1: Build ###
+FROM node:12.7-alpine AS build
 WORKDIR /usr/src/app
-
-RUN npm install -g @angular/cli@latest
-
-COPY . /usr/src/app
-
-RUN cd /usr/src/app
-
-RUN ls -l
-
-CMD ng update --all --force
-
-CMD ng serve --host 0.0.0.0 --port 4500
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+### STAGE 2: Run ###
+FROM nginx:1.17.1-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/ui /usr/share/nginx/html
