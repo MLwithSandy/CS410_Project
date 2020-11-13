@@ -1,78 +1,73 @@
 <div class="home">
 
-
-
-  <p class="p1">home works!</p>
-
-
-  <div class="search">
-    <input class="searchInput form-control-lg" type="text" [(ngModel)]="stockSymbol">
-    <button class="searchButton" (click)="getStockRating()">Search</button>
+  <div class="header-area">
+    <div class="header-class">
+      <p>
+        Stock Recommendation Engine
+      </p>
+    </div>
   </div>
-
-  <p class="p2">
-    Overall RatingsModel
-  </p>
-
-
-<!--  <div *ngIf="lstLogs">-->
-<!--    <table>-->
-<!--      <tr>-->
-<!--        <th>DateTime</th>-->
-<!--        <th>Symbol</th>-->
-<!--        <th>Market</th>-->
-<!--      </tr>-->
-<!--      <tr *ngFor="let log of lstLogs">-->
-<!--        <td>{{log.datetime}}</td>-->
-<!--        <td>{{log.symbol}}</td>-->
-<!--        <td>{{log.market}}</td>-->
-<!--      </tr>-->
-<!--    </table>-->
-<!--  </div>-->
-
-<!--  <p *ngFor="let rating of ratingsList">-->
-<!--    RatingsModel = {{rating.overallRating}}-->
-<!--  </p>-->
-
-<!--&lt;!&ndash;  <div class="cards">&ndash;&gt;-->
-
-<!--&lt;!&ndash;    <mat-toolbar color="primary">&ndash;&gt;-->
-<!--&lt;!&ndash;      Card view demo&ndash;&gt;-->
-<!--&lt;!&ndash;    </mat-toolbar>&ndash;&gt;-->
-<!--&lt;!&ndash;    <div class="content">&ndash;&gt;-->
-<!--&lt;!&ndash;      <mat-card class="mat-elevation-z4">&ndash;&gt;-->
-<!--&lt;!&ndash;        <mat-card-header>&ndash;&gt;-->
-<!--&lt;!&ndash;          <mat-card-title>Himalayan Peaks</mat-card-title>&ndash;&gt;-->
-<!--&lt;!&ndash;        </mat-card-header>&ndash;&gt;-->
-<!--&lt;!&ndash;        <img mat-card-image src="./../assets/images/p1.jpg" class="img">&ndash;&gt;-->
-<!--&lt;!&ndash;        <mat-card-content>&ndash;&gt;-->
-<!--&lt;!&ndash;          <p>&ndash;&gt;-->
-<!--&lt;!&ndash;            The Himalayas is a mountain range in Asia.&ndash;&gt;-->
-<!--&lt;!&ndash;          </p>&ndash;&gt;-->
-<!--&lt;!&ndash;        </mat-card-content>&ndash;&gt;-->
-<!--&lt;!&ndash;        <mat-card-actions>&ndash;&gt;-->
-<!--&lt;!&ndash;          <button mat-button>LIKE</button>&ndash;&gt;-->
-<!--&lt;!&ndash;          <button mat-button>SHARE</button>&ndash;&gt;-->
-<!--&lt;!&ndash;        </mat-card-actions>&ndash;&gt;-->
-<!--&lt;!&ndash;      </mat-card>&ndash;&gt;-->
-<!--&lt;!&ndash;    </div>&ndash;&gt;-->
-
-<!--&lt;!&ndash;  </div>&ndash;&gt;-->
-
-<!--</div>-->
-
-  <div class="ratingChart">
-    <div class="grafico">
-      <div class="content">
-        <div class="bars" *ngFor="let item of List">
-          <span>{{item.value}}</span>
-          <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+  <div class="search-area">
+    <div class="search">
+      <input class="searchInput form-control-lg" type="text" [(ngModel)]="stockSymbol">
+      <button class="searchButton" (click)="getStockRating()">Search</button>
+      <p class="p2">
+        Overall RatingsModel
+      </p>
+    </div>
+    <div class="rating-chart">
+      <div class="grafico">
+        <div class="content">
+          <div class="bars" *ngFor="let item of List">
+            <span>{{item.value}}</span>
+            <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+          </div>
+        </div>
+        <!--<div class="line"></div>-->
+        <div class="legends">
+          <span *ngFor="let item of List">{{item.legend}}</span>
         </div>
       </div>
-      <!--<div class="line"></div>-->
-      <div class="legends">
-        <span *ngFor="let item of List">{{item.legend}}</span>
+    </div>
+  </div>
+  <div class="card-container">
+    <div class="card-base card-one">
+      <div class="img-one"></div>
+      <div class="btn-base btn-one">
+        <p>BUY</p>
       </div>
+      <div class="content">
+        <p>
+          Sing up for a memebership today and get awesome
+          prodctions and services that you have not received before!
+        </p>
+      </div>
+    </div>
+    <div class="card-base card-two">
+      <div class="img-two"></div>
+      <div class="btn-base btn-two">
+        <p>HOLD</p>
+      </div>
+      <div class="content">
+        <p>
+          Sing up for a memebership today and get awesome
+          prodctions and services that you have not received before!
+        </p>
+      </div>
+
+    </div>
+    <div class="card-base card-three">
+      <div class="img-three"></div>
+      <div class="btn-base btn-three">
+        <p>SELL</p>
+      </div>
+      <div class="content">
+        <p>
+          Sing up for a memebership today and get awesome
+          prodctions and services that you have not received before!
+        </p>
+      </div>
+
     </div>
   </div>
 

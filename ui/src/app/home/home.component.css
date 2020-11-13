@@ -4,31 +4,58 @@
   grid-gap: 10px;
   /*grid-template-rows: 1fr 4fr 2.5fr 2.5fr*/
   grid-template:
-  "a    a   a" 1fr
-  "b    b   b1" 4fr
-  "c    c   c" 2.5fr
-  "d    d   d" 2.5fr
+  "a" 1fr
+  "b" 4fr
+  "c" 5fr
 ;
 }
 
-.search {
+.header-area {
+  grid-area: a;
+  display: grid;
+  margin: auto 10px;
+  height: 100%;
+  align-content: center;
+  background-color: #707070;
+}
+
+.header-class {
+  font-size: 36px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
+  color: darkslategray;
+}
+
+.search-area {
   grid-area: b;
   display: grid;
   height: 100%;
-  grid-gap: 5px;
+  margin: auto 10px;
+  background-color: #B7E0FF;
+  grid-template-columns: 2fr 1fr;
+}
+
+.search {
+  grid-area: 1;
+  display: grid;
+  height: 100%;
+  /*grid-gap: 5px;*/
   grid-template:
   "s1" 0.5fr
   "s2" 0.5fr
   "s3" 3fr
 ;
+  background-color: honeydew;
 }
 
 .searchInput {
   grid-area: s1;
   place-content: center;
+  height: 60px;
   width: 85%;
-  border-radius: 8px;
+  border-radius: 30px;
   justify-self: center ;
+  box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
+
 
 }
 
@@ -38,11 +65,11 @@
   place-content: center;
   width: 20%;
   height: 40px;
-  border-radius: 8px;
-  font-weight: bolder;
-  font-family: Arial;
+  border-radius: 20px;
+  font-size: 18px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
   color: white;
-  background-color: darkslategray;
+  background-color: navy;
   justify-self: center ;
 }
 
@@ -55,23 +82,33 @@
   grid-area: c;
 }
 
-.ratingChart {
-  grid-area: b1;
-  place-content: center;
+.rating-chart {
+  grid-column: 2;
   /* align-self: center; */
+  background-color: #FFE697;
+  height: 100%;
+  width: 100%;
 
 }
+
+/*.grafico {*/
+/*  background-color: black;*/
+/*  align-self: center;*/
+/*  height: 100%;*/
+/*  width: 100%;*/
+
+/*}*/
 
 .grafico .content{
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 160px;
+  height: 400px;
 }
 
 .grafico .content span{
   font-family: 'Roboto';
-  font-size: 13px;
+  font-size: 15px;
   color: #707070;
 }
 
@@ -87,14 +124,16 @@
   display: flex;
   flex-direction: row;
   color: #707070;
-  font-family: 'Roboto';
-  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
+  font-size: 18px;
   text-align: center;
 }
 
 .grafico .legends span{
   width: 60px;
-  margin:0 15px;
+  margin: 0px 20px;
+  background-color: darkred;
+
 }
 
 .grafico .bars{
@@ -117,3 +156,113 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 17px rgba(0, 0, 0, 0.20);
 }
+
+.card-container {
+  grid-area: c;
+  display: flex;
+  justify-content: center;
+  background-color: green;
+  margin: auto 10px;
+
+}
+
+.card-base {
+  width: 350px;
+  height: 500px;
+  margin: 50px;
+  border-radius: 40px;
+  box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
+}
+
+.card-base:hover {
+  box-shadow: 2px 12px 32px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  cursor: pointer;
+  transition: .3s box-shadow, .3s margin-top ease-in-out;
+}
+
+.card-one {
+  background-color: #FFE697;
+}
+
+.content {
+  padding: 35px 35px;
+  font-size: 18px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
+
+
+}
+
+
+.img-one {
+  background: url('/assets/images/p2.jpg') no-repeat;
+  width: 350px;
+  height: 300px;
+  border-radius: 40px;
+  background-size: 150%;
+  /*background-position: 0%;*/
+}
+
+.btn-base {
+  display: flex;
+  width: 260px;
+  height: 50px;
+  border-radius: 50px;
+  margin: 0 auto;
+  margin-top: -25px;
+  font-size: 30px;
+  justify-content: center;
+  /*align-items: center;*/
+  align-items: flex-end;
+  color: white;
+}
+
+.btn-one {
+  background-color: green;
+}
+
+.card-two {
+  background-color: #E4E4E4;
+}
+
+
+.img-two {
+  background: url('/assets/images/p1.jpg') no-repeat;
+  width: 350px;
+  height: 300px;
+  border-radius: 40px;
+  background-size: 150%;
+  /*background-position: 0%;*/
+}
+
+.btn-two {
+  background-color: orange;
+}
+
+.card-three {
+  background-color: #B7E0FF;
+}
+
+.img-three {
+  background: url('/assets/images/p3.jpg') no-repeat;
+  width: 350px;
+  height: 300px;
+  border-radius: 40px;
+  background-size: 150%;
+  /*background-position: 0%;*/
+}
+
+.btn-three {
+  background-color: red;
+}
+
+@media (max-width: 1350px) {
+  .card-container{
+    flex-direction: column;
+  }
+  .card-base {
+    margin: 50px auto;
+  }
+}
+
+
