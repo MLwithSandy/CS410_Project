@@ -1,4 +1,7 @@
-from datetime import datetime
+import json
+from datetime import datetime, date
+import random
+
 from bson.json_util import dumps
 
 import markdown
@@ -54,6 +57,28 @@ def rating(market, stock_symbol):
     return Response(ws.main(market, stock_symbol), mimetype='text/plain')
 
 
+@app.route("/stock/recommendation/list")
+@cross_origin()
+def recommendation_list():
+    today_date = str(date.today())
+    # request item
+    search_dict = {
+        'refreshData': today_date
+    }
+
+    col_hide_dict = {
+        "_id": 0,
+        # "index": 0,
+        # "analystsRatings.index": 0
+    }
+
+    # read 5 items from db
+    _items = dbo.read_n_stocks_rating(search_dict, 5, col_hide_dict)
+
+    resp = dumps(_items)
+    return Response(resp, mimetype='text/plain')
+
+
 @app.route("/requests/all")
 @cross_origin()
 def request_log_all():
@@ -95,3 +120,24 @@ def stocks_all_refresh_date(date):
     resp = dumps(_items)
 
     return Response(resp, mimetype='text/bytes')
+
+
+@app.route("/stock/sentiments/<market>/<stock_symbol>")
+@cross_origin()
+def stocks_sentiment(market, stock_symbol):
+    print("market: ", market)
+    print("stock_symbol: ", stock_symbol)
+
+    today_date = str(date.today())
+
+    sentiment = random.randint(1, 3)
+
+    sentiment = {
+        "stockSymbol": stock_symbol,
+        "refreshDate": today_date,
+        "sentiment": sentiment
+    }
+    resp = json.dumps(sentiment)
+
+    return Response(resp, mimetype='text/bytes')
+

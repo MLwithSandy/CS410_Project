@@ -9,25 +9,62 @@
   </div>
   <div class="search-area">
     <div class="search">
-      <input class="searchInput form-control-lg" type="text" [(ngModel)]="stockSymbol">
-      <button class="searchButton" (click)="getStockRating()">Search</button>
-      <p class="p2">
-        Overall RatingsModel
-      </p>
-    </div>
-    <div class="rating-chart">
-      <div class="grafico">
-        <div class="content">
-          <div class="bars" *ngFor="let item of List">
-            <span>{{item.value}}</span>
-            <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+      <div class="search-form">
+        <input class="search-input" type="text" [(ngModel)]="stockSymbol">
+        <button class="search-btn" (click)="getStockRating()">Search</button>
+      </div>
+      <div class="search-result">
+        <p class="p2">
+          Overall Rating
+        </p>
+        <div class="result-panel">
+          <div class="result-card-base">
+            <div class="result-img-one"></div>
+            <div class="result-label-one">
+              <p>
+                Analyst Rating
+              </p>
+            </div>
+          </div>
+          <div class="result-card-base">
+            <div class="result-img-one"></div>
+            <div class="result-label-one">
+              <p>
+                User Sentiments
+              </p>
+            </div>
+          </div>
+          <div class="result-card-base">
+            <div class="result-img-one"></div>
+            <div class="result-label-one">
+              <p>
+                Overall Rating
+              </p>
+            </div>
           </div>
         </div>
-        <!--<div class="line"></div>-->
-        <div class="legends">
-          <span *ngFor="let item of List">{{item.legend}}</span>
-        </div>
+
+<!--        <div class="rating-chart">-->
+<!--          <div class="grafico">-->
+<!--            <div class="content">-->
+<!--              <div class="bars" *ngFor="let item of List">-->
+<!--                <span>{{item.value}}</span>-->
+<!--                <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash;<div class="line"></div>&ndash;&gt;-->
+<!--            <div class="legends">-->
+<!--              <span *ngFor="let item of List">{{item.legend}}</span>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
+    </div>
+    <div class="data-area">
+      <p class="p2">
+        Data feed
+      </p>
+
     </div>
   </div>
   <div class="card-container">

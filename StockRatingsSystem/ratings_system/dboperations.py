@@ -45,11 +45,21 @@ def read_all_ratings_db():
     return _items
 
 
-# read all ratings items in requestlogdb db with matching criteria
+# # read all ratings items in ratings db with matching criteria
+#
+# def read_ratings_db(search_dict, col_hide_dict):
+#     db = client.ratingsdb
+#     print("search criteria: ", search_dict)
+#     _items = list(db.ratingsdb.find(search_dict, col_hide_dict))
+#     print("_items", _items)
+#     return _items
 
-def read_ratings_db(search_dict, col_hide_dict):
+
+# read all ratings items in ratings db with matching criteria
+
+def read_n_stocks_rating(search_dict, no_items, col_hide_dict):
     db = client.ratingsdb
     print("search criteria: ", search_dict)
-    _items = list(db.ratingsdb.find(search_dict, col_hide_dict))
+    _items = list(db.ratingsdb.find(search_dict, col_hide_dict).limit(no_items))
     print("_items", _items)
     return _items

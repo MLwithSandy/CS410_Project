@@ -78,6 +78,7 @@ def scale_ratings(ratings):
         "NEUTRAL": 0,
         "MARKET PERFORM": 0,
         "PEER PERFORM": 0,
+        "EQUAL WEIGHT": 0,
         "OUTPERFORM": 1,
         "MODERATE BUY": 1,
         "ACCUMULATE": 1,
@@ -87,10 +88,15 @@ def scale_ratings(ratings):
         "ADD": 1,
         "BULLISH": 1,
         "BUY": 1,
-        "STRONG BUY": 1
+        "STRONG BUY": 1,
+        "TOP PICK": 1
     }
 
-    return ratings_dict[ratings.upper()]
+    if ratings.upper() in ratings_dict:
+        return ratings_dict[ratings.upper()]
+    else:
+        print('rating not found: ""', ratings.upper())
+        return 0
 
 
 # reverse mapping of average ratings
@@ -182,6 +188,9 @@ def scrape_web(market, stock_symbol):
             df_last_month_desc = df_rel[last_month_mask].sort_values(by=['ratingDate'], ascending=False)
             df_current_month_desc = df_current_month_desc.append(df_last_month_desc)
 
+        if df_current_month_desc.empty:
+            df_current_month_desc = df_rel[last_month_mask].sort_values(by=['ratingDate'], ascending=False)
+
         # move date column as first column first
         cols = list(df_current_month_desc)
         cols = [cols[-1]] + cols[:-1]
@@ -229,28 +238,38 @@ def main(market, stock_symbol):
         # "analystsRatings.index": 0
     }
 
-    data_from_db = dbo.read_ratings_db(search_dict, col_hide_dict)
+    error_msg = {
+        "errorMsg": "no record could be fetched"
+    }
+
+    json_obj = json.dumps(error_msg)
+
+    data_from_db = dbo.read_n_stocks_rating(search_dict, 1, col_hide_dict)
 
     if not bool(data_from_db):
         # if not present in db, get the data via web
         df = scrape_web(market, stock_symbol)
-        overall_ratings = calculate_overall_ratings(df)
 
-        df.reset_index(inplace=True)
-        data_dict_df = df.to_dict("records")
-        print(data_dict_df)
+        if df is None:
+            print('no data available for stock_symbol: ', stock_symbol)
+        else:
+            overall_ratings = calculate_overall_ratings(df)
 
-        result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
-        df_result = pd.DataFrame(result, columns=column_list)
+            df.reset_index(inplace=True)
+            data_dict_df = df.to_dict("records")
+            print(data_dict_df)
 
-        df_result.reset_index(inplace=True)
-        result_doc = df_result.to_dict("records")
+            result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
+            df_result = pd.DataFrame(result, columns=column_list)
 
-        dbo.insert_ratings_db(result_doc);
+            df_result.reset_index(inplace=True)
+            result_doc = df_result.to_dict("records")
 
-        json_obj = df_result.to_json(orient='records', date_format='iso')
+            dbo.insert_ratings_db(result_doc);
 
-        print('data read from webscrapper')
+            json_obj = df_result.to_json(orient='records', date_format='iso')
+
+            print('data read from webscrapper')
     else:
         result_doc = data_from_db
         json_obj = json.dumps(result_doc)
