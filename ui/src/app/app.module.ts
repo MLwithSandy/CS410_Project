@@ -17,6 +17,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { HomeComponent } from './home/home.component';
 import { P404Component } from './p404/p404.component';
 import {FormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSortModule} from '@angular/material/sort';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -30,6 +35,11 @@ import {FormsModule} from '@angular/forms';
     RouterModule,
     MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
     BrowserAnimationsModule,
     MatCardModule,
     MatToolbarModule,

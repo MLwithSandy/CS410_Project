@@ -1,10 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {LogData} from '../model/logData';
 import {HttpClient} from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import {RatingsModel} from '../model/ratings.model';
 import {RatingsChartModel} from '../model/ratingsChart.model';
+import {AnalystsRating} from '../model/analystsRating';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
 
 
 @Component({
@@ -12,7 +16,7 @@ import {RatingsChartModel} from '../model/ratingsChart.model';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
 
   lstLogs: LogData[];
   stockSymbol = 'AAPL';
@@ -21,10 +25,21 @@ export class HomeComponent implements OnInit {
 
   List: RatingsChartModel[];
 
+  dataSource = new MatTableDataSource();
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
+
   constructor(private httpClient: HttpClient) {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   getRequestLog(): void {
@@ -48,6 +63,20 @@ export class HomeComponent implements OnInit {
         for (i = 0; i < this.ratingsList.length; i++){
           this.List = this.aggregateRating(this.ratingsList[i]);
         }
+
+        // console.log(this.ratingsList);
+        for (i = 0; i < this.ratingsList.length; i++){
+          if (this.dataSource.data.length === 0){
+            this.dataSource.data = this.ratingsList[i].analystsRatings;
+          }
+          else{
+            this.dataSource.data.concat(this.ratingsList[i].analystsRatings);
+          }
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        }
+
+        console.log(this.dataSource.data);
       });
   }
 

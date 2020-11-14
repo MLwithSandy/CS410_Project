@@ -18,52 +18,98 @@
           Overall Rating
         </p>
         <div class="result-panel">
-          <div class="result-card-base">
-            <div class="result-img-one"></div>
+          <div class="result-card-base result-card-one">
             <div class="result-label-one">
               <p>
                 Analyst Rating
               </p>
             </div>
-          </div>
-          <div class="result-card-base">
+
             <div class="result-img-one"></div>
+            <div class="result-btn-base result-btn-one">
+              <p>HOLD</p>
+            </div>
+          </div>
+          <div class="result-card-base result-card-one">
             <div class="result-label-one">
               <p>
                 User Sentiments
               </p>
             </div>
-          </div>
-          <div class="result-card-base">
             <div class="result-img-one"></div>
+            <div class="result-btn-base result-btn-one">
+              <p>HOLD</p>
+            </div>
+          </div>
+          <div class="result-card-base result-card-one">
             <div class="result-label-one">
               <p>
                 Overall Rating
               </p>
             </div>
+            <div class="result-img-one"></div>
+            <div class="result-btn-base result-btn-one">
+              <p>HOLD</p>
+            </div>
           </div>
         </div>
 
-<!--        <div class="rating-chart">-->
-<!--          <div class="grafico">-->
-<!--            <div class="content">-->
-<!--              <div class="bars" *ngFor="let item of List">-->
-<!--                <span>{{item.value}}</span>-->
-<!--                <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            &lt;!&ndash;<div class="line"></div>&ndash;&gt;-->
-<!--            <div class="legends">-->
-<!--              <span *ngFor="let item of List">{{item.legend}}</span>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+
       </div>
     </div>
     <div class="data-area">
+      <div class="data-area-header">
       <p class="p2">
-        Data feed
+        Analyst Ratings
       </p>
+      </div>
+      <div class="data-card-container">
+
+        <div class="rating-chart data-card-base">
+          <div class="grafico">
+            <div class="content">
+              <div class="bars" *ngFor="let item of List">
+                <span>{{item.value}}</span>
+                <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+              </div>
+            </div>
+            <!--<div class="line"></div>-->
+            <div class="legends">
+              <span *ngFor="let item of List">{{item.legend}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rating-list">
+          <mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
+
+            <ng-container matColumnDef="ratingDate">
+              <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+              <mat-cell class="rating-date-cell"
+                *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAgency">
+              <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
+              <mat-cell class="rating-agency-cell"
+                        *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
+
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAssigned">
+              <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
+              <mat-cell class="rating-cell"
+                        *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+          </mat-table>
+          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
+        </div>
+      </div>
 
     </div>
   </div>
