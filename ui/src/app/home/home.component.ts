@@ -9,6 +9,9 @@ import {AnalystsRating} from '../model/analystsRating';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
+import {FormControl} from '@angular/forms';
+import {RatingsCardModel} from '../model/ratings-card.model';
+import {Constants} from '../model/Constants.model';
 
 
 @Component({
@@ -19,9 +22,14 @@ import {MatSort} from '@angular/material/sort';
 export class HomeComponent implements OnInit, AfterViewInit {
 
   lstLogs: LogData[];
+
+  @Input()
   stockSymbol = 'AAPL';
 
-  ratingsList: RatingsModel[];
+  // ratingsList: RatingsModel[];
+
+  ratingsList: RatingsModel;
+  ratingsCardModel: RatingsCardModel;
 
   List: RatingsChartModel[];
 
@@ -29,12 +37,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
+  // displayedColumns = ['ratingDate', 'stockSymbol', 'ratingAgency', 'ratingAssigned'];
   displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
 
   constructor(private httpClient: HttpClient) {
   }
 
   ngOnInit(): void {
+    this.ratingsCardModel = new RatingsCardModel();
+    this.ratingsList = new RatingsModel();
+    this.ratingsList.analystsRatings = [];
+
   }
 
   ngAfterViewInit(): void {
@@ -51,41 +64,70 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
   }
 
-  getStockRating(): void{
-    this.httpClient
-      .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
-      .pipe(map((response: any) => response))
-      .subscribe(result => {
-        this.ratingsList = result;
+ getSearchResult(): void{
+    this.getStockRating().subscribe(
+      result => {
+        this.ratingsList = result[0];
+        this.getRatingsCardStyle();
+        this.getRatingForChart();
+        this.prepareRatingDataTable();
+      }
+    );
 
-        let i;
-
-        for (i = 0; i < this.ratingsList.length; i++){
-          this.List = this.aggregateRating(this.ratingsList[i]);
-        }
-
-        // console.log(this.ratingsList);
-        for (i = 0; i < this.ratingsList.length; i++){
-          if (this.dataSource.data.length === 0){
-            this.dataSource.data = this.ratingsList[i].analystsRatings;
-          }
-          else{
-            this.dataSource.data.concat(this.ratingsList[i].analystsRatings);
-          }
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        }
-
-        console.log(this.dataSource.data);
-      });
   }
 
-  aggregateRating($ratingsModel): RatingsChartModel[] {
+  getRatingForChart(): void{
+    this.List = this.aggregatedRatingForChart(this.ratingsList);
+  }
+
+  prepareRatingDataTable(): void{
+    this.dataSource.data = [];
+
+    this.dataSource.data = this.ratingsList.analystsRatings;
+
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    console.log(this.dataSource.data);
+  }
+
+  getRatingsCardStyle(): void{
+      this.ratingsCardModel.imgPath = '/assets/images/' + this.ratingsList.overallRating + '.svg';
+      this.ratingsCardModel.btnBgColor =
+        (this.ratingsList.overallRating === 'BUY' ? Constants.COLOR[0]
+          : this.ratingsList.overallRating === 'HOLD' ? Constants.COLOR[1]
+          : Constants.COLOR[2]);
+
+  }
+
+
+  getStockRating(): any{
+
+    // this.ratingsList = [];
+
+    console.log('stockSymbol: ' + this.stockSymbol  );
+    return this.httpClient
+      .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
+      .pipe(map((response: any) =>  response));
+
+  }
+
+  getSentiment(): any{
+
+    // this.ratingsList = [];
+
+    console.log('stockSymbol: ' + this.stockSymbol  );
+    return this.httpClient
+      .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
+      .pipe(map((response: any) =>  response));
+
+  }
+
+  aggregatedRatingForChart($ratingsModel): RatingsChartModel[] {
 
     let tempList: RatingsChartModel[] = [
-      {value: 0, color: '#FF0000', size: '', legend: 'SELL'},
-      {value: 0, color: '#F8C622', size: '', legend: 'HOLD'},
-      {value: 0, color: '#008000', size: '', legend: 'BUY'},
+      {value: 0, color: Constants.COLOR[2], size: '', legend: 'SELL'},
+      {value: 0, color: Constants.COLOR[1], size: '', legend: 'HOLD'},
+      {value: 0, color: Constants.COLOR[0], size: '', legend: 'BUY'},
     ];
 
     // Calculate the sums and group data (while tracking count)

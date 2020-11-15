@@ -141,7 +141,7 @@
 .result-img-one {
   grid-area: 2;
   display: grid;
-  background: url('/assets/images/rainy-day.svg') no-repeat;
+  /*background: url('/assets/images/HOLD.svg') no-repeat;*/
   width: 80px;
   height: 80px;
   border-radius: 50px;
@@ -180,7 +180,7 @@
 }
 
 .result-btn-one {
-  background-color: green;
+  /*background-color: green;*/
 }
 
 

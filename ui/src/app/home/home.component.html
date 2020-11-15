@@ -10,8 +10,8 @@
   <div class="search-area">
     <div class="search">
       <div class="search-form">
-        <input class="search-input" type="text" [(ngModel)]="stockSymbol">
-        <button class="search-btn" (click)="getStockRating()">Search</button>
+        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>
+        <button class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
       <div class="search-result">
         <p class="p2">
@@ -24,16 +24,15 @@
                 Analyst Rating
               </p>
             </div>
-
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
+              <p>{{ratingsList?.overallRating}}</p>
             </div>
           </div>
           <div class="result-card-base result-card-one">
             <div class="result-label-one">
               <p>
-                User Sentiments
+                Twitter Sentiments
               </p>
             </div>
             <div class="result-img-one"></div>
@@ -88,6 +87,12 @@
               <mat-cell class="rating-date-cell"
                 *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
             </ng-container>
+
+<!--            <ng-container matColumnDef="ratingDate">-->
+<!--              <mat-header-cell *matHeaderCellDef>Stock</mat-header-cell>-->
+<!--              <mat-cell class="rating-date-cell"-->
+<!--                        *matCellDef="let rating">{{rating.stockSymbol}}</mat-cell>-->
+<!--            </ng-container>-->
 
             <ng-container matColumnDef="ratingAgency">
               <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
