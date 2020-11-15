@@ -1,4 +1,4 @@
-Flask==0.12.2
+Flask==1.1.2
 flask_cors
 markdown==3.3.3
 beautifulsoup4==4.9.3

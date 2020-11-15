@@ -35,9 +35,9 @@
                 Twitter Sentiments
               </p>
             </div>
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
+              <p>{{ratingsList?.sentiment.sentiment}}</p>
             </div>
           </div>
           <div class="result-card-base result-card-one">
@@ -46,9 +46,9 @@
                 Overall Rating
               </p>
             </div>
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
+              <p>{{ratingsList?.combinedRating}}</p>
             </div>
           </div>
         </div>

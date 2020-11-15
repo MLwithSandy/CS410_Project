@@ -12,6 +12,7 @@ import {MatSort} from '@angular/material/sort';
 import {FormControl} from '@angular/forms';
 import {RatingsCardModel} from '../model/ratings-card.model';
 import {Constants} from '../model/Constants.model';
+import {TwitterSentiment} from '../model/twitter-sentiment.model';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ratingsList: RatingsModel;
   ratingsCardModel: RatingsCardModel;
+  sentimentCardModel: RatingsCardModel;
+  overallCardModel: RatingsCardModel;
 
   List: RatingsChartModel[];
 
@@ -45,7 +48,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.ratingsCardModel = new RatingsCardModel();
+    this.sentimentCardModel = new RatingsCardModel();
+    this.overallCardModel = new RatingsCardModel();
     this.ratingsList = new RatingsModel();
+    this.ratingsList.sentiment = new TwitterSentiment();
     this.ratingsList.analystsRatings = [];
 
   }
@@ -66,15 +72,39 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
  getSearchResult(): void{
     this.getStockRating().subscribe(
+    // this.getCombinedRating().subscribe(
       result => {
+
+        // const testM: RatingsModel[] = result.analyst;
+        // console.log('result.analyst[0]', testM);
+        // console.log('result.sentiment', result.sentiment);
+
+
+        // console.log('testM', this.ratingsList);
+
         this.ratingsList = result[0];
         this.getRatingsCardStyle();
         this.getRatingForChart();
         this.prepareRatingDataTable();
+
+        this.getSentiments().subscribe(
+          res => {
+              const senti = new TwitterSentiment();
+              senti.stockSymbol = res.stockSymbol;
+              senti.refreshDate = res.refreshDate;
+              senti.sentimentClass = res.sentiment;
+              senti.sentiment = Constants.SENTIMENT[3 - senti.sentimentClass];
+              this.ratingsList.sentiment = senti;
+              this.getSentimentCardStyle();
+              this.getOverallRating();
+              this.getOverallCardStyle();
+          }
+        );
       }
     );
 
   }
+
 
   getRatingForChart(): void{
     this.List = this.aggregatedRatingForChart(this.ratingsList);
@@ -91,14 +121,42 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getRatingsCardStyle(): void{
-      this.ratingsCardModel.imgPath = '/assets/images/' + this.ratingsList.overallRating + '.svg';
-      this.ratingsCardModel.btnBgColor =
-        (this.ratingsList.overallRating === 'BUY' ? Constants.COLOR[0]
-          : this.ratingsList.overallRating === 'HOLD' ? Constants.COLOR[1]
+    this.ratingsCardModel.imgPath = '/assets/images/' + this.ratingsList.overallRating + '.svg';
+    this.ratingsCardModel.btnBgColor =
+      (this.ratingsList.overallRating === 'BUY' ? Constants.COLOR[0]
+        : this.ratingsList.overallRating === 'HOLD' ? Constants.COLOR[1]
           : Constants.COLOR[2]);
-
   }
 
+  getSentimentCardStyle(): void{
+    const scaledSenti = 3 - this.ratingsList.sentiment.sentimentClass;
+    this.sentimentCardModel.imgPath = '/assets/images/' + Constants.SENTIMENT[scaledSenti] + '.svg';
+    this.sentimentCardModel.btnBgColor = Constants.COLOR[scaledSenti];
+  }
+
+  getOverallRating(): void{
+
+    let index = Constants.SENTIMENT.findIndex(x => x === this.ratingsList.sentiment.sentiment);
+    const tempSentiment = Constants.SENTIMENT_SCALE[index];
+
+    index = Constants.RATING.findIndex(x => x === this.ratingsList.overallRating);
+    const tempRating = Constants.RATING_SCALE[index];
+
+    const resultRating = (tempSentiment + tempRating > 1 ? tempSentiment + tempRating - 1
+                          : tempSentiment + tempRating < -1 ? tempSentiment + tempRating + 1
+                          : tempSentiment + tempRating);
+
+    index = Constants.RATING_SCALE.findIndex(x => x === resultRating);
+    this.ratingsList.combinedRating = Constants.RATING[index];
+  }
+
+  getOverallCardStyle(): void{
+    this.overallCardModel.imgPath = '/assets/images/' + this.ratingsList.combinedRating + '.svg';
+    this.overallCardModel.btnBgColor =
+      (this.ratingsList.combinedRating === 'BUY' ? Constants.COLOR[0]
+        : this.ratingsList.combinedRating === 'HOLD' ? Constants.COLOR[1]
+          : Constants.COLOR[2]);
+  }
 
   getStockRating(): any{
 
@@ -111,16 +169,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   }
 
-  getSentiment(): any{
+  getCombinedRating(): any{
 
     // this.ratingsList = [];
 
     console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
-      .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
+      .get('http://localhost:5000/stock/ratings/combined/NASDAQ/' + this.stockSymbol)
       .pipe(map((response: any) =>  response));
 
   }
+
+  getSentiments(): any{
+
+    console.log('stockSymbol: ' + this.stockSymbol  );
+    return this.httpClient
+      .get('http://localhost:5000/stock/sentiments/NASDAQ/' + this.stockSymbol)
+      .pipe(map((response: any) =>  response));
+
+  }
+
 
   aggregatedRatingForChart($ratingsModel): RatingsChartModel[] {
 

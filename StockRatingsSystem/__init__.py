@@ -28,55 +28,14 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def index():
     """Present readme.md"""
     # Open readme.md file
-    with open(os.path.dirname(app.root_path) + '/readme.md', 'r') as markdown_file:
+    with open(os.path.dirname(app.root_path) + '/app/readme.md', 'r') as markdown_file:
+        print('os.path.dirname(app.root_path)', os.path.dirname(app.root_path))
         # Read the content of the file
         content = markdown_file.read()
 
         # Convert it to HTML
         return markdown.markdown(content)
         # return "test 1 2 3"
-
-
-@app.route("/stock/ratings/<market>/<stock_symbol>")
-@cross_origin()
-def rating(market, stock_symbol):
-    print("market: ", market)
-    print("stock_symbol: ", stock_symbol)
-    date = datetime.now().isoformat();
-
-    # request item
-    request_doc = {
-        'datetime': date,
-        'symbol': stock_symbol,
-        'market': market
-    }
-
-    # log the request into db
-    dbo.insert_request_log_db(request_doc)
-
-    return Response(ws.main(market, stock_symbol), mimetype='text/plain')
-
-
-@app.route("/stock/recommendation/list")
-@cross_origin()
-def recommendation_list():
-    today_date = str(date.today())
-    # request item
-    search_dict = {
-        'refreshData': today_date
-    }
-
-    col_hide_dict = {
-        "_id": 0,
-        # "index": 0,
-        # "analystsRatings.index": 0
-    }
-
-    # read 5 items from db
-    _items = dbo.read_n_stocks_rating(search_dict, 5, col_hide_dict)
-
-    resp = dumps(_items)
-    return Response(resp, mimetype='text/plain')
 
 
 @app.route("/requests/all")
@@ -125,6 +84,80 @@ def stocks_all_refresh_date(date):
 @app.route("/stock/sentiments/<market>/<stock_symbol>")
 @cross_origin()
 def stocks_sentiment(market, stock_symbol):
+    sentiment_resp = getSentimentFromBackend(market, stock_symbol)
+
+    print('sentiment_resp: ', sentiment_resp)
+    resp = json.dumps(sentiment_resp)
+
+    return Response(resp, mimetype='text/bytes')
+
+
+@app.route("/stock/recommendation/list")
+@cross_origin()
+def recommendation_list():
+    today_date = str(date.today())
+    # request item
+    search_dict = {
+        'refreshData': today_date
+    }
+
+    col_hide_dict = {
+        "_id": 0,
+        # "index": 0,
+        # "analystsRatings.index": 0
+    }
+
+    # read 5 items from db
+    _items = dbo.read_n_stocks_rating(search_dict, 5, col_hide_dict)
+
+    resp = dumps(_items)
+    return Response(resp, mimetype='text/plain')
+
+
+@app.route("/stock/ratings/<market>/<stock_symbol>")
+@cross_origin()
+def rating(market, stock_symbol):
+    rating_response = getRatingFromBackend(market, stock_symbol)
+
+    return Response(rating_response, mimetype='text/plain')
+
+
+@app.route("/stock/ratings/combined/<market>/<stock_symbol>")
+@cross_origin()
+def overallRating(market, stock_symbol):
+    rating_analyst = getRatingFromBackend(market, stock_symbol)
+    sentiment_resp = getSentimentFromBackend(market, stock_symbol)
+
+    overall_ratings = {
+        "analyst": rating_analyst.to_json(),
+        "sentiment": sentiment_resp,
+    }
+
+    response = json.dumps(overall_ratings)
+
+    return Response(response, mimetype='text/plain')
+
+
+def getRatingFromBackend(market, stock_symbol):
+    print("market: ", market)
+    print("stock_symbol: ", stock_symbol)
+    date = datetime.now().isoformat();
+
+    # request item
+    request_doc = {
+        'datetime': date,
+        'symbol': stock_symbol,
+        'market': market
+    }
+
+    # log the request into db
+    dbo.insert_request_log_db(request_doc)
+
+    rating = ws.main(market, stock_symbol);
+    return rating;
+
+
+def getSentimentFromBackend(market, stock_symbol):
     print("market: ", market)
     print("stock_symbol: ", stock_symbol)
 
@@ -137,7 +170,5 @@ def stocks_sentiment(market, stock_symbol):
         "refreshDate": today_date,
         "sentiment": sentiment
     }
-    resp = json.dumps(sentiment)
 
-    return Response(resp, mimetype='text/bytes')
-
+    return sentiment;

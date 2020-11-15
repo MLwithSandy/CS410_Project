@@ -31,7 +31,7 @@
 
 .search-area {
   grid-area: b;
-  display: grid;
+  display: flex;
   height: 100%;
   margin: auto 10px;
   grid-gap: 20px;
@@ -126,7 +126,7 @@
   display: grid;
   width: 200px;
   height: 260px;
-  margin: 20px auto;
+  margin: 20px 50px;
   border-radius: 25px;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
   place-content: center;
@@ -434,6 +434,18 @@ mat-header-cell {
 }
 
 @media (max-width: 1350px) {
+
+  .search-area{
+    flex-direction: column;
+  }
+
+  .result-panel{
+    flex-direction: column;
+  }
+  .data-card-container{
+    flex-direction: column;
+
+  }
   .card-container{
     flex-direction: column;
   }
