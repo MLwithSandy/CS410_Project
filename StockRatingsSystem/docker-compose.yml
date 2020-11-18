@@ -11,3 +11,7 @@ services:
             - db
     db:
         image: mongo:3.0.2
+        volumes:
+              - mongodata:/data/db
+volumes:
+  mongodata:
