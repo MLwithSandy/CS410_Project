@@ -18,7 +18,6 @@ import {RecommendationModel} from '../model/recommendation.model';
 
 declare var $: any;
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',

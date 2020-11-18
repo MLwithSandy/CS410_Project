@@ -14,10 +14,8 @@
         <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
         <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
-      <ng-container *ngIf="ratingsList">
-
-      </ng-container>
-      <div class="search-result">
+      <ng-container *ngIf="ratingsList?.stockSymbol">
+        <div class="search-result">
         <p class="p2">
           Overall Rating
         </p>
@@ -59,8 +57,10 @@
 
 
       </div>
+      </ng-container>
     </div>
-    <div class="data-area">
+    <ng-container *ngIf="ratingsList?.stockSymbol">
+      <div class="data-area">
       <div class="data-area-header">
       <p class="p2">
         Analyst Ratings
@@ -121,8 +121,11 @@
       </div>
 
     </div>
+    </ng-container>
+
   </div>
-  <div class="card-container">
+  <ng-container *ngIf="ratingsList?.stockSymbol">
+    <div class="card-container">
     <ng-container *ngFor="let reco of recoList">
     <div class="card-base card-one">
       <div class="img-one"></div>
@@ -164,5 +167,5 @@
 
 <!--    </div>-->
   </div>
-
+  </ng-container>
 </div>
