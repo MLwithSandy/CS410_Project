@@ -13,6 +13,9 @@ from ratings_system import webscrapper as ws
 from ratings_system import dboperations as dbo
 from nasdaq import listStocks as lst
 
+import pandas as pd
+
+
 # create an instance of Flask
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -173,6 +176,19 @@ def getSentimentFromBackend(market, stock_symbol):
     }
 
     return sentiment;
+
+@app.route("/stock/recommendation/<stock_symbol>")
+@cross_origin()
+def getRecommendationList(stock_symbol):
+    stock_list = ['AAPL', 'FB', 'TSLA', 'MSFT', 'BYND']
+    stock_df = pd.DataFrame(stock_list, columns=['stock_symbol'])
+
+    recoList = {
+        "stockSymbol": stock_list,
+    }
+    response = stock_df.to_json()
+
+    return Response(response, mimetype='text/plain')
 
 
 @app.route("/stock/all")
