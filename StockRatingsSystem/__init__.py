@@ -11,6 +11,7 @@ from flask_cors import CORS, cross_origin
 
 from ratings_system import webscrapper as ws
 from ratings_system import dboperations as dbo
+from nasdaq import listStocks as lst
 
 # create an instance of Flask
 app = Flask(__name__)
@@ -172,3 +173,13 @@ def getSentimentFromBackend(market, stock_symbol):
     }
 
     return sentiment;
+
+
+@app.route("/stock/all")
+@cross_origin()
+def listOfStocks():
+    listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    listOfStocks_res = listOfStocks['Symbol'] + ': ' + listOfStocks['Security Name']
+    print(listOfStocks[0:5])
+    response = listOfStocks_res.to_json()
+    return Response(response, mimetype='text/plain')

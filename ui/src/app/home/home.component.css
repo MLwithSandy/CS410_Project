@@ -79,11 +79,40 @@
   border-radius: 30px;
   justify-self: center ;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
-  font-size: 30px;
+  font-size: 24px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
   padding-left: 25px;
   /*outline: 3px solid red;*/
 }
+
+/*.ui-autocomplete {*/
+/*  position: absolute;*/
+/*  top: 100%;*/
+/*  left: 0;*/
+/*  z-index: 1000;*/
+/*  float: left;*/
+/*  display: none;*/
+/*  min-width: 160px;*/
+/*  margin: 0 0 10px 25px;*/
+/*  list-style: none;*/
+/*  color: darkred;*/
+/*  background-color: #ffffff;*/
+/*  border: 1px solid rgba(0, 0, 0, 0.2);*/
+/*}*/
+/*.ui-menu{*/
+/*  list-style: none;*/
+/*  color: darkred;*/
+
+
+/*}*/
+/*.ui-menu-item{*/
+/*  padding:0 .5em;*/
+/*  line-height:2em;*/
+/*  font-size:.8em;*/
+/*  color: darkred;*/
+
+/*}*/
+
 
 
 .search-btn {
@@ -432,6 +461,8 @@ mat-header-cell {
   transform: translateY(-1px);
   box-shadow: 0 4px 17px rgba(0, 0, 0, 0.20);
 }
+
+
 
 @media (max-width: 1350px) {
 

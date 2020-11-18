@@ -13,6 +13,9 @@ import {FormControl} from '@angular/forms';
 import {RatingsCardModel} from '../model/ratings-card.model';
 import {Constants} from '../model/Constants.model';
 import {TwitterSentiment} from '../model/twitter-sentiment.model';
+import {StockListService} from '../services/StockList.Service';
+
+declare var $: any;
 
 
 @Component({
@@ -24,8 +27,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   lstLogs: LogData[];
 
+  stockList: any[] = [];
+  stockList2: any;
+
+
   @Input()
-  stockSymbol = 'AAPL';
+  stockSymbol;
 
   // ratingsList: RatingsModel[];
 
@@ -34,25 +41,46 @@ export class HomeComponent implements OnInit, AfterViewInit {
   sentimentCardModel: RatingsCardModel;
   overallCardModel: RatingsCardModel;
 
+  lastkeydown1 = 0;
+  lastkeydown2 = 0;
+  subscription: any;
+
   List: RatingsChartModel[];
 
   dataSource = new MatTableDataSource();
+
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   // displayedColumns = ['ratingDate', 'stockSymbol', 'ratingAgency', 'ratingAssigned'];
   displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private stockListService: StockListService) {
+    // Get the user data from users.json
+    this.stockListService.getStockList().subscribe(
+      data => {
+        Object.assign(this.stockList, data);
+        // console.log('data: ', data);
+        console.log('this.stockList: ', this.stockList);
+      },
+      error => {
+        console.log('Something wrong here');
+      });
   }
 
+
   ngOnInit(): void {
+    $('#stockSymbol').autocomplete({
+      source: this.stockList
+    });
+
     this.ratingsCardModel = new RatingsCardModel();
     this.sentimentCardModel = new RatingsCardModel();
     this.overallCardModel = new RatingsCardModel();
     this.ratingsList = new RatingsModel();
     this.ratingsList.sentiment = new TwitterSentiment();
     this.ratingsList.analystsRatings = [];
+    this.getSearchResult();
 
   }
 
@@ -70,8 +98,43 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
   }
 
+  // tslint:disable-next-line:typedef
+  getStockSymbol($event) {
+
+    const stockId = (document.getElementById('dynamicUserIdsSecondWay') as HTMLInputElement).value;
+
+    if (stockId.length > 2) {
+      if ($event.timeStamp - this.lastkeydown2 > 200) {
+        this.stockList2 = this.searchFromArray(this.stockList, stockId);
+
+        $('#stockSymbol').autocomplete({
+          source: this.stockList2,
+          messages: {
+            noResults: '',
+            results(): void { }
+          }
+        });
+      }
+    }
+  }
+
+  // tslint:disable-next-line:typedef
+  searchFromArray(arr, regex) {
+    let matches = [], i;
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i].match(regex)) {
+        matches.push(arr[i]);
+      }
+    }
+    return matches;
+  }
+
+
  getSearchResult(): void{
-    this.getStockRating().subscribe(
+   this.stockSymbol = (document.getElementById('stockSymbol') as HTMLInputElement).value.split(':')[0];
+
+   console.log('this.stockSymbol', this.stockSymbol);
+   this.getStockRating().subscribe(
     // this.getCombinedRating().subscribe(
       result => {
 

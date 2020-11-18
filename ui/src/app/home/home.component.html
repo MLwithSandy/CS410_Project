@@ -10,8 +10,9 @@
   <div class="search-area">
     <div class="search">
       <div class="search-form">
-        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>
-        <button class="search-btn" (click)="getSearchResult()">Search</button>
+<!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
+        <input class="search-input" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
+        <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
       <div class="search-result">
         <p class="p2">
