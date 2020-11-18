@@ -180,13 +180,10 @@ def getSentimentFromBackend(market, stock_symbol):
 @app.route("/stock/recommendation/<stock_symbol>")
 @cross_origin()
 def getRecommendationList(stock_symbol):
-    stock_list = ['AAPL', 'FB', 'TSLA', 'MSFT', 'BYND']
-    stock_df = pd.DataFrame(stock_list, columns=['stock_symbol'])
+    stock_list = [[1, 'AAPL'], [2, 'FB'], [3, 'TSLA'], [4, 'MSFT'], [5, 'BYND']]
+    stock_df = pd.DataFrame(stock_list, columns=['seq', 'stock_symbol'])
 
-    recoList = {
-        "stockSymbol": stock_list,
-    }
-    response = stock_df.to_json()
+    response = stock_df.to_json(orient='records')
 
     return Response(response, mimetype='text/plain')
 

@@ -14,6 +14,7 @@ import {RatingsCardModel} from '../model/ratings-card.model';
 import {Constants} from '../model/Constants.model';
 import {TwitterSentiment} from '../model/twitter-sentiment.model';
 import {StockListService} from '../services/StockList.Service';
+import {RecommendationModel} from '../model/recommendation.model';
 
 declare var $: any;
 
@@ -40,6 +41,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ratingsCardModel: RatingsCardModel;
   sentimentCardModel: RatingsCardModel;
   overallCardModel: RatingsCardModel;
+
+  recoList: RecommendationModel[];
 
   lastkeydown1 = 0;
   lastkeydown2 = 0;
@@ -80,8 +83,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.ratingsList = new RatingsModel();
     this.ratingsList.sentiment = new TwitterSentiment();
     this.ratingsList.analystsRatings = [];
-    this.getSearchResult();
-
+    this.recoList = [];
   }
 
   ngAfterViewInit(): void {
@@ -163,6 +165,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
               this.getOverallCardStyle();
           }
         );
+        this.getRecommendationList().subscribe(
+          res => {
+            this.recoList = res;
+            console.log('res: ' , res);
+            console.log('this.recolist: ', this.recoList);
+          }
+        );
+
       }
     );
 
@@ -248,6 +258,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/sentiments/NASDAQ/' + this.stockSymbol)
+      .pipe(map((response: any) =>  response));
+
+  }
+
+  getRecommendationList(): any{
+
+    console.log('stockSymbol: ' + this.stockSymbol  );
+    return this.httpClient
+      .get('http://localhost:5000/stock/recommendation/' + this.stockSymbol)
       .pipe(map((response: any) =>  response));
 
   }

@@ -11,9 +11,12 @@
     <div class="search">
       <div class="search-form">
 <!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
-        <input class="search-input" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
+        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
         <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
+      <ng-container *ngIf="ratingsList">
+
+      </ng-container>
       <div class="search-result">
         <p class="p2">
           Overall Rating
@@ -120,6 +123,7 @@
     </div>
   </div>
   <div class="card-container">
+    <ng-container *ngFor="let reco of recoList">
     <div class="card-base card-one">
       <div class="img-one"></div>
       <div class="btn-base btn-one">
@@ -127,37 +131,38 @@
       </div>
       <div class="content">
         <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
+          {{reco.seq}}.  {{reco.stock_symbol}}
+          test 1
         </p>
       </div>
     </div>
-    <div class="card-base card-two">
-      <div class="img-two"></div>
-      <div class="btn-base btn-two">
-        <p>HOLD</p>
-      </div>
-      <div class="content">
-        <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
-        </p>
-      </div>
+    </ng-container>
+<!--    <div class="card-base card-two">-->
+<!--      <div class="img-two"></div>-->
+<!--      <div class="btn-base btn-two">-->
+<!--        <p>HOLD</p>-->
+<!--      </div>-->
+<!--      <div class="content">-->
+<!--        <p>-->
+<!--          Sing up for a memebership today and get awesome-->
+<!--          prodctions and services that you have not received before!-->
+<!--        </p>-->
+<!--      </div>-->
 
-    </div>
-    <div class="card-base card-three">
-      <div class="img-three"></div>
-      <div class="btn-base btn-three">
-        <p>SELL</p>
-      </div>
-      <div class="content">
-        <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
-        </p>
-      </div>
+<!--    </div>-->
+<!--    <div class="card-base card-three">-->
+<!--      <div class="img-three"></div>-->
+<!--      <div class="btn-base btn-three">-->
+<!--        <p>SELL</p>-->
+<!--      </div>-->
+<!--      <div class="content">-->
+<!--        <p>-->
+<!--          Sing up for a memebership today and get awesome-->
+<!--          prodctions and services that you have not received before!-->
+<!--        </p>-->
+<!--      </div>-->
 
-    </div>
+<!--    </div>-->
   </div>
 
 </div>
