@@ -15,7 +15,6 @@ from nasdaq import listStocks as lst
 
 import pandas as pd
 
-
 # create an instance of Flask
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -177,6 +176,7 @@ def getSentimentFromBackend(market, stock_symbol):
 
     return sentiment;
 
+
 @app.route("/stock/recommendation/<stock_symbol>")
 @cross_origin()
 def getRecommendationList(stock_symbol):
@@ -196,3 +196,13 @@ def listOfStocks():
     print(listOfStocks[0:5])
     response = listOfStocks_res.to_json()
     return Response(response, mimetype='text/plain')
+
+
+@app.route("/stock/sector/<stock_symbol>")
+@cross_origin()
+def getStockSector(stock_symbol):
+    listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    df = listOfStocks.loc[listOfStocks['Symbol'] == stock_symbol]
+    response = df.to_json(orient='records');
+    return Response(response, mimetype='text/plain')
+

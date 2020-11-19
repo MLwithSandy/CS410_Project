@@ -1,4 +1,7 @@
 export class RecommendationModel{
-  sequence: number;
-  stockSymbol: string;
+  seq: number;
+  stock_symbol: string;
+  sector: string;
+  stockName: string;
+  bg_img: string;
 }

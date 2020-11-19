@@ -7,8 +7,14 @@ def read_NASDAQ_List():
                    'Round Lot Size', 'Test Issue', 'Financial Status',
                    'CQS Symbol', 'NASDAQ Symbol', 'NextShares']
     list_nsdq_stock = pd.read_table('nasdaqtraded.txt', sep='|', header=0, engine='python')
-    print(list_nsdq_stock.head(5))
+    print(list_nsdq_stock.sample(5))
     return list_nsdq_stock
+
+
+def read_NASDAQ_Sector_List():
+    list_stock_sector = pd.read_csv('nasdaq-companies.csv', sep=';', header=0, engine='python')
+    print(list_stock_sector.sample(5))
+    return list_stock_sector
 
 
 def read_fin_data_2018():
@@ -91,9 +97,17 @@ def main():
     fin_data = read_fin_data_2018()
     fin_data_symbol = fin_data['Symbol']
 
+    stock_sector = read_NASDAQ_Sector_List();
+    stock_sector_symbol = stock_sector[['Symbol', 'Sector']].fillna('')
+    # print(stock_sector_symbol.head(20))
+
     # common stocks in fin_data and list_nsdq_stock
 
-    list_nsdq_fin_data_symbol = pd.merge(fin_data_symbol, list_nsdq_stock_symbol, how='inner', on=['Symbol', 'Symbol'])
+    list_nsdq_stock_symbol_sector = pd.merge(list_nsdq_stock_symbol, stock_sector_symbol
+                                             , how='inner'
+                                             , on=['Symbol', 'Symbol'])
+    list_nsdq_fin_data_symbol = pd.merge(fin_data_symbol, list_nsdq_stock_symbol_sector, how='inner', on=['Symbol', 'Symbol'])
+
     print(list_nsdq_fin_data_symbol.head(20))
     print(len(list_nsdq_fin_data_symbol))
     list_nsdq_fin_data_symbol.to_csv(r'nasdaq_result_list.csv', index=False)

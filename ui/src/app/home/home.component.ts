@@ -15,6 +15,7 @@ import {Constants} from '../model/Constants.model';
 import {TwitterSentiment} from '../model/twitter-sentiment.model';
 import {StockListService} from '../services/StockList.Service';
 import {RecommendationModel} from '../model/recommendation.model';
+import {StockSectorModel} from '../model/stock-sector.model';
 
 declare var $: any;
 
@@ -30,7 +31,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   stockList: any[] = [];
   stockList2: any;
 
-
   @Input()
   stockSymbol;
 
@@ -42,6 +42,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   overallCardModel: RatingsCardModel;
 
   recoList: RecommendationModel[];
+  stockSector: StockSectorModel;
 
   lastkeydown1 = 0;
   lastkeydown2 = 0;
@@ -83,6 +84,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.ratingsList.sentiment = new TwitterSentiment();
     this.ratingsList.analystsRatings = [];
     this.recoList = [];
+    this.stockSector = new StockSectorModel();
   }
 
   ngAfterViewInit(): void {
@@ -136,16 +138,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
    console.log('this.stockSymbol', this.stockSymbol);
    this.getStockRating().subscribe(
-    // this.getCombinedRating().subscribe(
       result => {
-
-        // const testM: RatingsModel[] = result.analyst;
-        // console.log('result.analyst[0]', testM);
-        // console.log('result.sentiment', result.sentiment);
-
-
-        // console.log('testM', this.ratingsList);
-
         this.ratingsList = result[0];
         this.getRatingsCardStyle();
         this.getRatingForChart();
@@ -164,16 +157,27 @@ export class HomeComponent implements OnInit, AfterViewInit {
               this.getOverallCardStyle();
           }
         );
-        this.getRecommendationList().subscribe(
-          res => {
-            this.recoList = res;
-            console.log('res: ' , res);
-            console.log('this.recolist: ', this.recoList);
-          }
-        );
 
       }
     );
+
+   this.getRecommendationList().subscribe(
+     res => {
+       this.recoList = res;
+       for ( let i = 0; i < this.recoList.length; i++) {
+          this.getStockSector(this.recoList[i].stock_symbol).subscribe(
+            res1 => {
+              this.recoList[i].stockName = res1[0]['Security Name'].split('-')[0];
+              this.recoList[i].sector = res1[0].Sector;
+              this.recoList[i].bg_img = '/assets/images/te.jpg';
+            }
+         );
+       }
+
+     }
+   );
+
+
 
   }
 
@@ -186,7 +190,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.dataSource.data = [];
 
     this.dataSource.data = this.ratingsList.analystsRatings;
-
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     console.log(this.dataSource.data);
@@ -266,6 +269,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/recommendation/' + this.stockSymbol)
+      .pipe(map((response: any) =>  response));
+
+  }
+
+  getStockSector($stockSymbol): any{
+
+    console.log('stockSymbol: ' + $stockSymbol );
+    return this.httpClient
+      .get('http://localhost:5000/stock/sector/' + $stockSymbol)
       .pipe(map((response: any) =>  response));
 
   }
