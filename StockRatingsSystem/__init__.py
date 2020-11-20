@@ -180,11 +180,24 @@ def getSentimentFromBackend(market, stock_symbol):
 @app.route("/stock/recommendation/<stock_symbol>")
 @cross_origin()
 def getRecommendationList(stock_symbol):
-    stock_list = [[1, 'AAPL'], [2, 'FB'], [3, 'TSLA'], [4, 'MSFT'], [5, 'BYND']]
-    stock_df = pd.DataFrame(stock_list, columns=['seq', 'stock_symbol'])
+    listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    RatingList = ['BUY', 'SELL', 'HOLD'];
+    stock_df = pd.DataFrame(columns=['seq', 'stockSymbol', 'stockName', 'sector', 'rating'])
+
+    for x in range(0, 5):
+        randomRow = random.randint(1, len(listOfStocks))
+        randomRating = random.randint(0, 2)
+        print('Random: ', randomRow, randomRating, RatingList[randomRating], listOfStocks.iloc[randomRow, 0],
+              listOfStocks.iloc[randomRow, 2])
+        stock_df = stock_df.append(
+            {'seq': x + 1
+                , 'stockSymbol': listOfStocks.iloc[randomRow, 0]
+                , 'stockName': ('' if isNaN(listOfStocks.iloc[randomRow, 1]) else listOfStocks.iloc[randomRow, 1].split('-')[0].strip())
+                , 'sector': ('' if isNaN(listOfStocks.iloc[randomRow, 2]) else listOfStocks.iloc[randomRow, 2])
+                , 'rating': RatingList[randomRating]}
+            , ignore_index=True)
 
     response = stock_df.to_json(orient='records')
-
     return Response(response, mimetype='text/plain')
 
 
@@ -192,7 +205,7 @@ def getRecommendationList(stock_symbol):
 @cross_origin()
 def listOfStocks():
     listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
-    listOfStocks_res = listOfStocks['Symbol'] + ': ' + listOfStocks['Security Name']
+    listOfStocks_res = listOfStocks['Symbol'] + ': ' + listOfStocks['Security Name'].map(lambda x: x.split('-')[0].strip())
     print(listOfStocks[0:5])
     response = listOfStocks_res.to_json()
     return Response(response, mimetype='text/plain')
@@ -202,7 +215,11 @@ def listOfStocks():
 @cross_origin()
 def getStockSector(stock_symbol):
     listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    print(listOfStocks['Sector'].unique())
     df = listOfStocks.loc[listOfStocks['Symbol'] == stock_symbol]
     response = df.to_json(orient='records');
+
     return Response(response, mimetype='text/plain')
 
+def isNaN(string):
+    return string != string

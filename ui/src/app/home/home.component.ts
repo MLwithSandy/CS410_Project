@@ -164,21 +164,20 @@ export class HomeComponent implements OnInit, AfterViewInit {
    this.getRecommendationList().subscribe(
      res => {
        this.recoList = res;
+       console.log('this.recoList: ', this.recoList);
        for ( let i = 0; i < this.recoList.length; i++) {
-          this.getStockSector(this.recoList[i].stock_symbol).subscribe(
-            res1 => {
-              this.recoList[i].stockName = res1[0]['Security Name'].split('-')[0];
-              this.recoList[i].sector = res1[0].Sector;
-              this.recoList[i].bg_img = '/assets/images/te.jpg';
-            }
-         );
+          this.recoList[i].bgImg = 'miscellaneous.jpg';
+          if (this.recoList[i].sector !== ''){
+            this.recoList[i].bgImg = this.recoList[i].sector.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() + '.jpg';
+          }
+          this.recoList[i].cardImg = '/assets/images/' + this.recoList[i].rating + '.svg';
+          this.recoList[i].btnColor =
+           (this.recoList[i].rating === 'BUY' ? Constants.COLOR[0]
+             : this.recoList[i].rating === 'HOLD' ? Constants.COLOR[1]
+               : Constants.COLOR[2]);
        }
-
      }
    );
-
-
-
   }
 
 
