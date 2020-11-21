@@ -25,7 +25,9 @@
                 Analyst Rating
               </p>
             </div>
-            <div class="result-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+            </div>
             <div class="result-btn-base result-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
               <p>{{ratingsList?.overallRating}}</p>
             </div>
@@ -36,7 +38,9 @@
                 Twitter Sentiments
               </p>
             </div>
-            <div class="result-img-one" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            </div>
             <div class="result-btn-base result-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
               <p>{{ratingsList?.sentiment.sentiment}}</p>
             </div>
@@ -47,7 +51,9 @@
                 Overall Rating
               </p>
             </div>
-            <div class="result-img-one" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            </div>
             <div class="result-btn-base result-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
               <p>{{ratingsList?.combinedRating}}</p>
             </div>

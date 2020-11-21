@@ -191,8 +191,25 @@
 
 .result-img-one {
   grid-area: 2;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   /*background: url('/assets/images/HOLD.svg') no-repeat;*/
+  width: 100%;
+  height: 100%;
+  /*border-radius: 50px;*/
+  background-size: 100%;
+  margin: auto auto;
+  /*place-content: center;*/
+
+  /*background-position: 0%;*/
+  /*outline: 3px solid red;*/
+}
+
+.rating-img-one {
+  /*grid-area: 2;*/
+  background: no-repeat;
+  /*display: flex;*/
+  /*background-color: white;*/
   width: 80px;
   height: 80px;
   border-radius: 50px;
@@ -200,8 +217,14 @@
   margin: auto auto;
   place-content: center;
 
-  /*background-position: 0%;*/
+  /*background-position: 50%;*/
   /*outline: 3px solid red;*/
+}
+
+.rd{
+  align-self: flex-end;
+  margin-bottom: 0px;
+  font-size: x-small;
 }
 
 .result-label-one {
