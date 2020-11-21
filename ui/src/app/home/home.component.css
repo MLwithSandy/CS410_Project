@@ -224,6 +224,7 @@
 .rd{
   align-self: flex-end;
   margin-bottom: 0px;
+  margin-right: 5px;
   font-size: x-small;
 }
 

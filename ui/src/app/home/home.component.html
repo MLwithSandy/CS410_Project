@@ -27,6 +27,9 @@
             </div>
             <div class="result-img-one">
               <div class="rating-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+              <p class="rd" *ngIf="ratingsList?.refreshData">
+                reresh: {{ratingsList?.refreshData | date:'mediumDate'}}
+              </p>
             </div>
             <div class="result-btn-base result-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
               <p>{{ratingsList?.overallRating}}</p>
