@@ -156,7 +156,7 @@ def getRatingFromBackend(market, stock_symbol):
     # log the request into db
     dbo.insert_request_log_db(request_doc)
 
-    rating = ws.main(market, stock_symbol);
+    rating = ws.main(market, stock_symbol, '');
     return rating;
 
 

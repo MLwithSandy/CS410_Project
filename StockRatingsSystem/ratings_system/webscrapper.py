@@ -219,18 +219,22 @@ def scrape_web_t(market, stock_symbol):
 
 # Main function
 
-def main(market, stock_symbol):
+def main(market, stock_symbol, date_in):
     # check db first
 
     column_list = ['stockSymbol', 'marketPlace', 'refreshData', 'overallRating', 'analystsRatings']
 
-    today_date = str(date.today())
-
-    search_dict = {
-        column_list[0]: stock_symbol,
-        column_list[1]: market,
-      #  column_list[2]: today_date
-    }
+    if date_in == '':
+        search_dict = {
+            column_list[0]: stock_symbol,
+            column_list[1]: market,
+        }
+    else:
+        search_dict = {
+            column_list[0]: stock_symbol,
+            column_list[1]: market,
+            column_list[2]: date_in
+        }
 
     col_hide_dict = {
         "_id": 0,
