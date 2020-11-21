@@ -229,7 +229,7 @@ def main(market, stock_symbol):
     search_dict = {
         column_list[0]: stock_symbol,
         column_list[1]: market,
-        column_list[2]: today_date
+      #  column_list[2]: today_date
     }
 
     col_hide_dict = {
