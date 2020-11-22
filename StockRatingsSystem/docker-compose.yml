@@ -5,33 +5,15 @@ services:
         build: .
         volumes:
             - .:/usr/src/app
-#        ports:
-#            - 5000:80
+        ports:
+            - 5000:80
         links:
             - db
-        networks:
-            - db_nw
-            - web_nw
     db:
-        image: mongo:3.0.2
+        image: mongo
         volumes:
-              - mongodata:/data/db
-        networks:
-            - db_nw
-    nginx:
-        image: "nginx:1.13.5"
-        ports:
-            - "5000:80"
-        volumes:
-            - ./conf.d:/etc/nginx/conf.d
-        networks:
-            - web_nw
-        depends_on:
-            - ratings
-networks:
-    db_nw:
-        driver: bridge
-    web_nw:
-        driver: bridge
-volumes:
-  mongodata:
+              - ./mongodbvol:/data/db
+#volumes:
+#  mongodbvol:
+
+
