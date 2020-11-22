@@ -12,8 +12,8 @@ services:
     db:
         image: mongo
         volumes:
-              - ./mongodbvol:/data/db
-#volumes:
-#  mongodbvol:
+              - ./mongodata:/data/db
+volumes:
+  mongodata:
 
 
