@@ -12,7 +12,7 @@ services:
     db:
         image: mongo
         volumes:
-              - ./mongodata:/data/db
+              - mongodata:/data/db
 volumes:
   mongodata:
 
