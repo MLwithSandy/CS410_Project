@@ -223,6 +223,7 @@ def main(market, stock_symbol, date_in):
     # check db first
 
     column_list = ['stockSymbol', 'marketPlace', 'refreshData', 'overallRating', 'analystsRatings']
+    today_date = str(date.today())
 
     if date_in == '':
         search_dict = {
