@@ -63,13 +63,25 @@ def request_log_all():
 
 @app.route("/stock/ratings/all")
 @cross_origin()
-def stocks_all():
+def stocks_ratings_all():
     # read all ratings from db
     _items = dbo.read_all_ratings_db()
     # items = [item for item in _items]
     resp = dumps(_items)
 
     return Response(resp, mimetype='text/bytes')
+
+# read all ratings from db
+
+@app.route("/stock/all")
+@cross_origin()
+def stocks_all():
+    listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    stock_df = pd.DataFrame(listOfStocks)
+    stock_df.insert(2, "Market", "NASDAQ", True)
+
+    response = stock_df.to_json(orient='records')
+    return Response(response, mimetype='text/plain')
 
 
 # @app.route("/stock/ratings/refresh/<date>")

@@ -1,7 +1,6 @@
 from datetime import date
 
 from ratings_system import webscrapper as ws
-from ratings_system import dboperations as dbo
 
 # list of stocks
 def stock_list_t():
