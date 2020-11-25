@@ -1,0 +1,1 @@
+{"_default": {"1": {"index": 0, "stockSymbol": "TSLA", "marketPlace": "NASDAQ", "refreshData": "2020-11-25", "ratingDate": "2020-10-17", "ratingAgency": "TEST ANALYST 1", "ratingAssigned": "BUY"}, "2": {"index": 1, "stockSymbol": "TSLA", "marketPlace": "NASDAQ", "refreshData": "2020-11-25", "ratingDate": "2020-10-17", "ratingAgency": "TEST ANALYST 2", "ratingAssigned": "SELL"}}}

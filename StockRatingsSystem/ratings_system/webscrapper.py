@@ -257,8 +257,7 @@ def main(market, stock_symbol, date_in):
         print('no ratings available in DB, scrapping from web')
 
         # if not present in db, get the data via web
-        # df = scrape_web(market, stock_symbol)
-        df = scrape_web_t(market, stock_symbol)
+        df = scrape_web(market, stock_symbol)
 
         if df is None:
             print('no data available for stock_symbol: ', stock_symbol)

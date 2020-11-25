@@ -1,15 +1,11 @@
-import json
-
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError
-from datetime import datetime, date
-import pandas as pd
 from tinydb import TinyDB, Query, where
+from tinydb.operations import delete
+
 
 # tiny db client
 
-log_db = TinyDB('requestLogDB.json')
-ratings_db = TinyDB('ratingsDB.json')
+log_db = TinyDB('ratings_system/requestLogDB.json')
+ratings_db = TinyDB('ratings_system/ratingsDB.json')
 
 
 # insert request item in requestlogdb db
@@ -29,9 +25,9 @@ def read_all_request_log_db(col_hide_dict):
 # insert request item in requestlogdb db
 def insert_ratings_db(stock_symbol, data_dict):
     print("record to be inserted: ", data_dict)
-    # print("first remove... ")
-    # ratings_db.remove(where('stockSymbol') == stock_symbol)
-    # print("... then insert ")
+    print("first remove... ")
+    ratings_db.update(delete('stockSymbol'), where('stockSymbol') == stock_symbol)
+    print("... then insert ")
     ratings_db.insert_multiple(data_dict)
     return
 
