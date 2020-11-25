@@ -10,7 +10,8 @@ from flask import Flask, Response
 from flask_cors import CORS, cross_origin
 
 from ratings_system import webscrapper as ws
-from ratings_system import dboperations as dbo
+# from ratings_system import dboperations as dbo
+from ratings_system import tinydbops as dbo
 from nasdaq import listStocks as lst
 
 import pandas as pd
@@ -71,17 +72,17 @@ def stocks_all():
     return Response(resp, mimetype='text/bytes')
 
 
-@app.route("/stock/ratings/refresh/<date>")
-@cross_origin()
-def stocks_all_refresh_date(date):
-    # read all ratings from db
-    column_name = 'last refresh date'
-    search_criteria = date
-    _items = dbo.read_ratings_db(column_name, search_criteria)
-    # items = [item for item in _items]
-    resp = dumps(_items)
-
-    return Response(resp, mimetype='text/bytes')
+# @app.route("/stock/ratings/refresh/<date>")
+# @cross_origin()
+# def stocks_all_refresh_date(date):
+#     # read all ratings from db
+#     column_name = 'refreshDate'
+#     search_criteria = date
+#     _items = dbo.read_ratings_db(column_name, search_criteria)
+#     # items = [item for item in _items]
+#     resp = dumps(_items)
+#
+#     return Response(resp, mimetype='text/bytes')
 
 
 @app.route("/stock/sentiments/<market>/<stock_symbol>")
