@@ -1,6 +1,6 @@
-Stocks Recommender Engine
+## Stocks Recommender Engine
 
-## Set-up
+### Set-up
 
 To run the SRE UI and Backend components, you can run start script.
 
@@ -14,7 +14,7 @@ To run the SRE UI and Backend components, you can run start script.
 To stop the services, you can run respective stop script.
 
 
-## Usage
+### Usage
 
 After success of the start script, 
 
