@@ -1,6 +1,6 @@
-Stocks Recommender Engine Backend
+# Stocks Recommender Engine Backend
 
-## Usuage
+## Usage
 
 All response will have the form
 ```json

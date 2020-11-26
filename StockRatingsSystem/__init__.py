@@ -4,7 +4,7 @@ import random
 
 from bson.json_util import dumps
 
-import markdown
+from misaka import Markdown, HtmlRenderer
 import os
 from flask import Flask, Response
 from flask_cors import CORS, cross_origin
@@ -37,8 +37,11 @@ def index():
         # Read the content of the file
         content = markdown_file.read()
 
+        rndr = HtmlRenderer()
+        md = Markdown(rndr)
+
         # Convert it to HTML
-        return markdown.markdown(content)
+        return md(content)
         # return "test 1 2 3"
 
 
