@@ -14,6 +14,8 @@ from ratings_system import webscrapper as ws
 from ratings_system import tinydbops as dbo
 from nasdaq import listStocks as lst
 
+from TwitterSentimentAnalysis import sentimentAnalysis as sa
+
 import pandas as pd
 
 # create an instance of Flask
@@ -182,12 +184,19 @@ def getSentimentFromBackend(market, stock_symbol):
 
     today_date = str(date.today())
 
-    sentiment = random.randint(1, 3)
-
+    sentiment = sa.getSentiment(stock_symbol)
+    tweets_fetched = sa.getTweets(stock_symbol)
+    
+    if (len(tweets_fetched)<=5):
+        print(len(tweets_fetched))
+    else:
+        tweets_fetched = tweets_fetched[:5]
+    
     sentiment = {
-        "stockSymbol": stock_symbol,
-        "refreshDate": today_date,
-        "sentiment": sentiment
+            "stockSymbol": stock_symbol,
+            "refreshDate": today_date,
+            "sentiment": sentiment,
+            "tweets_fetched": tweets_fetched
     }
 
     return sentiment;
