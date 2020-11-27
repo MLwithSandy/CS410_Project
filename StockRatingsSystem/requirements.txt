@@ -7,3 +7,4 @@ pandas
 pymongo
 tinydb
 misaka
+nltk
