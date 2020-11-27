@@ -59,7 +59,7 @@ def getTweets(stock_symbol,max_result):
     
     tweets_fetched = []
     for item in parsed['data']:
-        tweets_fetched.append((str)(item['text'].encode("utf-8")))
+        tweets_fetched.append((str)(item['text']))
         #t = (str)(t.text.encode("utf-8"))
     #print(tweets_fetched)
     return tweets_fetched

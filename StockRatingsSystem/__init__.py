@@ -8,6 +8,7 @@ from misaka import Markdown, HtmlRenderer
 import os
 from flask import Flask, Response
 from flask_cors import CORS, cross_origin
+from flask_jsonpify import jsonpify as jsonpify
 
 from ratings_system import webscrapper as ws
 # from ratings_system import dboperations as dbo
@@ -110,7 +111,7 @@ def stocks_sentiment(market, stock_symbol):
     print('sentiment_resp: ', sentiment_resp)
     resp = json.dumps(sentiment_resp)
 
-    return Response(resp, mimetype='text/bytes')
+    return Response(resp, mimetype='text/plain')
 
 
 @app.route("/stock/recommendation/list")
@@ -191,15 +192,15 @@ def getSentimentFromBackend(market, stock_symbol):
         print(len(tweets_fetched))
     else:
         tweets_fetched = tweets_fetched[:5]
-    
+
     sentiment = {
             "stockSymbol": stock_symbol,
             "refreshDate": today_date,
             "sentiment": sentiment,
-            "tweets_fetched": tweets_fetched
+            "listOfTweets": json.dumps(tweets_fetched)
     }
 
-    return sentiment;
+    return sentiment
 
 
 @app.route("/stock/recommendation/<stock_symbol>")

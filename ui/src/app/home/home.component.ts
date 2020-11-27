@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       data => {
         Object.assign(this.stockList, data);
         // console.log('data: ', data);
-        console.log('this.stockList: ', this.stockList);
+        // console.log('this.stockList: ', this.stockList);
       },
       error => {
         console.log('Something wrong here');
@@ -104,7 +104,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   // tslint:disable-next-line:typedef
   getStockSymbol($event) {
 
-    const stockId = (document.getElementById('dynamicUserIdsSecondWay') as HTMLInputElement).value;
+    const stockId = (document.getElementById('stockSymbol') as HTMLInputElement).value;
 
     if (stockId.length > 2) {
       if ($event.timeStamp - this.lastkeydown2 > 200) {
@@ -136,7 +136,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
  getSearchResult(): void{
    this.stockSymbol = (document.getElementById('stockSymbol') as HTMLInputElement).value.split(':')[0];
 
-   console.log('this.stockSymbol', this.stockSymbol);
+   // console.log('this.stockSymbol', this.stockSymbol);
    this.getStockRating().subscribe(
       result => {
         this.ratingsList = result[0];
@@ -146,12 +146,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this.getSentiments().subscribe(
           res => {
+              // console.log('res:' , res);
               const senti = new TwitterSentiment();
               senti.stockSymbol = res.stockSymbol;
               senti.refreshDate = res.refreshDate;
               senti.sentimentClass = res.sentiment;
-              senti.sentiment = Constants.SENTIMENT[3 - senti.sentimentClass];
+              const index = Constants.SENTIMENT_SCALE.findIndex(x => x === res.sentiment);
+              senti.sentiment = Constants.SENTIMENT[index];
               this.ratingsList.sentiment = senti;
+              // console.log('this.ratingsList.sentiment: ', this.ratingsList.sentiment);
               this.getSentimentCardStyle();
               this.getOverallRating();
               this.getOverallCardStyle();
@@ -164,7 +167,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
    this.getRecommendationList().subscribe(
      res => {
        this.recoList = res;
-       console.log('this.recoList: ', this.recoList);
+       // console.log('this.recoList: ', this.recoList);
        for ( let i = 0; i < this.recoList.length; i++) {
           this.recoList[i].bgImg = 'miscellaneous.jpg';
           if (this.recoList[i].sector !== ''){
@@ -191,7 +194,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.ratingsList.analystsRatings;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    console.log(this.dataSource.data);
+    // console.log(this.dataSource.data);
   }
 
   getRatingsCardStyle(): void{
@@ -203,9 +206,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   getSentimentCardStyle(): void{
-    const scaledSenti = 3 - this.ratingsList.sentiment.sentimentClass;
-    this.sentimentCardModel.imgPath = '/assets/images/' + Constants.SENTIMENT[scaledSenti] + '.svg';
-    this.sentimentCardModel.btnBgColor = Constants.COLOR[scaledSenti];
+    const index = Constants.SENTIMENT.findIndex(x => x === this.ratingsList.sentiment.sentiment);
+    this.sentimentCardModel.imgPath = '/assets/images/' + this.ratingsList.sentiment.sentiment + '.svg';
+    this.sentimentCardModel.btnBgColor = Constants.COLOR[index];
   }
 
   getOverallRating(): void{
@@ -236,7 +239,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     // this.ratingsList = [];
 
-    console.log('stockSymbol: ' + this.stockSymbol  );
+    // console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
       .pipe(map((response: any) =>  response));
@@ -247,7 +250,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     // this.ratingsList = [];
 
-    console.log('stockSymbol: ' + this.stockSymbol  );
+    // console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/ratings/combined/NASDAQ/' + this.stockSymbol)
       .pipe(map((response: any) =>  response));
@@ -256,7 +259,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   getSentiments(): any{
 
-    console.log('stockSymbol: ' + this.stockSymbol  );
+    // console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/sentiments/NASDAQ/' + this.stockSymbol)
       .pipe(map((response: any) =>  response));
@@ -274,7 +277,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   getStockSector($stockSymbol): any{
 
-    console.log('stockSymbol: ' + $stockSymbol );
+    // console.log('stockSymbol: ' + $stockSymbol );
     return this.httpClient
       .get('http://localhost:5000/stock/sector/' + $stockSymbol)
       .pipe(map((response: any) =>  response));

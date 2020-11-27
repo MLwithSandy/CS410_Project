@@ -8,3 +8,6 @@ pymongo
 tinydb
 misaka
 nltk
+requests
+sklearn
+flask-jsonpify
