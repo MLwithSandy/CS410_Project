@@ -7,5 +7,4 @@ pandas
 pymongo
 tinydb
 misaka
-python-twitter
 nltk
