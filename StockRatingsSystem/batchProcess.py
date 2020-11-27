@@ -1,5 +1,6 @@
+from datetime import date
+
 from ratings_system import webscrapper as ws
-from ratings_system import dboperations as dbo
 
 # list of stocks
 def stock_list_t():
@@ -22,8 +23,10 @@ def stock_list_t():
 # update the ratings
 def main():
     stock_list = stock_list_t()
+    today_date = str(date.today())
+
     for stock in stock_list:
-        ws.main(stock[1], stock[0])
+        ws.main(stock[1], stock[0], today_date)
     return
 
 

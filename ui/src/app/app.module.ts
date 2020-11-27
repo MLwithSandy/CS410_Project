@@ -22,6 +22,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {StockListService} from './services/StockList.Service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     AppRoutingModule,
     FormsModule
   ],
-  providers: [],
+  providers: [StockListService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -10,8 +10,9 @@
   <div class="search-area">
     <div class="search">
       <div class="search-form">
-        <input class="search-input" type="text" [(ngModel)]="stockSymbol">
-        <button class="search-btn" (click)="getStockRating()">Search</button>
+<!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
+        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
+        <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
       <div class="search-result">
         <p class="p2">
@@ -24,21 +25,27 @@
                 Analyst Rating
               </p>
             </div>
-
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+              <p class="rd" *ngIf="ratingsList?.refreshData">
+                reresh: {{ratingsList?.refreshData | date:'mediumDate'}}
+              </p>
+            </div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
+              <p>{{ratingsList?.overallRating}}</p>
             </div>
           </div>
           <div class="result-card-base result-card-one">
             <div class="result-label-one">
               <p>
-                User Sentiments
+                Twitter Sentiments
               </p>
             </div>
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            </div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
+              <p>{{ratingsList?.sentiment.sentiment}}</p>
             </div>
           </div>
           <div class="result-card-base result-card-one">
@@ -47,111 +54,106 @@
                 Overall Rating
               </p>
             </div>
-            <div class="result-img-one"></div>
-            <div class="result-btn-base result-btn-one">
-              <p>HOLD</p>
+            <div class="result-img-one">
+              <div class="rating-img-one" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            </div>
+            <div class="result-btn-base result-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
+              <p>{{ratingsList?.combinedRating}}</p>
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
     <div class="data-area">
-      <div class="data-area-header">
-      <p class="p2">
-        Analyst Ratings
-      </p>
-      </div>
-      <div class="data-card-container">
+    <div class="data-area-header">
+    <p class="p2">
+      Analyst Ratings
+    </p>
+    </div>
+    <div class="data-card-container">
 
-        <div class="rating-chart data-card-base">
-          <div class="grafico">
-            <div class="content">
-              <div class="bars" *ngFor="let item of List">
-                <span>{{item.value}}</span>
-                <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
-              </div>
-            </div>
-            <!--<div class="line"></div>-->
-            <div class="legends">
-              <span *ngFor="let item of List">{{item.legend}}</span>
+      <div class="rating-chart data-card-base">
+        <div class="grafico">
+          <div class="content">
+            <div class="bars" *ngFor="let item of List">
+              <span>{{item.value}}</span>
+              <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+              <p></p>
+              <span>{{item.legend}}</span>
             </div>
           </div>
-        </div>
-
-        <div class="rating-list">
-          <mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
-
-            <ng-container matColumnDef="ratingDate">
-              <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-              <mat-cell class="rating-date-cell"
-                *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="ratingAgency">
-              <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
-              <mat-cell class="rating-agency-cell"
-                        *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
-
-            </ng-container>
-
-            <ng-container matColumnDef="ratingAssigned">
-              <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
-              <mat-cell class="rating-cell"
-                        *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
-            </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-
-          </mat-table>
-          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
+          <!--<div class="line"></div>-->
+<!--          <div class="legends">-->
+<!--            <span *ngFor="let item of List">{{item.legend}}</span>-->
+<!--          </div>-->
         </div>
       </div>
 
-    </div>
-  </div>
-  <div class="card-container">
-    <div class="card-base card-one">
-      <div class="img-one"></div>
-      <div class="btn-base btn-one">
-        <p>BUY</p>
-      </div>
-      <div class="content">
-        <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
-        </p>
-      </div>
-    </div>
-    <div class="card-base card-two">
-      <div class="img-two"></div>
-      <div class="btn-base btn-two">
-        <p>HOLD</p>
-      </div>
-      <div class="content">
-        <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
-        </p>
-      </div>
+      <div class="rating-list">
+        <mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
 
-    </div>
-    <div class="card-base card-three">
-      <div class="img-three"></div>
-      <div class="btn-base btn-three">
-        <p>SELL</p>
-      </div>
-      <div class="content">
-        <p>
-          Sing up for a memebership today and get awesome
-          prodctions and services that you have not received before!
-        </p>
-      </div>
+          <ng-container matColumnDef="ratingDate">
+            <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+            <mat-cell class="rating-date-cell"
+              *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
+          </ng-container>
 
+<!--            <ng-container matColumnDef="ratingDate">-->
+<!--              <mat-header-cell *matHeaderCellDef>Stock</mat-header-cell>-->
+<!--              <mat-cell class="rating-date-cell"-->
+<!--                        *matCellDef="let rating">{{rating.stockSymbol}}</mat-cell>-->
+<!--            </ng-container>-->
+
+          <ng-container matColumnDef="ratingAgency">
+            <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
+            <mat-cell class="rating-agency-cell"
+                      *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
+
+          </ng-container>
+
+          <ng-container matColumnDef="ratingAssigned">
+            <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
+            <mat-cell class="rating-cell"
+                      *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
+      </div>
     </div>
+
   </div>
 
+  </div>
+  <div class="reco-container">
+      <div class="p3">
+        <p>
+          Similar stocks
+        </p>
+      </div>
+      <div class="card-container">
+        <ng-container *ngFor="let reco of recoList">
+          <div class="card-base card-one">
+            <div class="img-one" [style.background-image]="'url(/assets/images/' + reco.bgImg + ')'">
+              <div class="reco-img-one" [style.background-image]="'url(' + reco.cardImg + ')'"></div>
+            </div>
+            <div class="btn-base btn-one" [style.background-color]="reco.btnColor">
+              <p>{{reco.rating}}</p>
+            </div>
+            <div>
+              <p class="content content-header">
+                {{reco.stockSymbol}}
+              </p>
+              <p class="content">
+                {{reco.stockName}}
+              </p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+  </div>
 </div>

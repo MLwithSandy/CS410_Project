@@ -8,7 +8,8 @@ import re
 from datetime import datetime, date
 import time
 import pandas as pd
-from ratings_system import dboperations as dbo
+# from ratings_system import dboperations as dbo
+from ratings_system import tinydbops as dbo
 
 
 # create a webdriver object and set options for headless browsing
@@ -219,18 +220,23 @@ def scrape_web_t(market, stock_symbol):
 
 # Main function
 
-def main(market, stock_symbol):
+def main(market, stock_symbol, date_in):
     # check db first
 
     column_list = ['stockSymbol', 'marketPlace', 'refreshData', 'overallRating', 'analystsRatings']
-
     today_date = str(date.today())
 
-    search_dict = {
-        column_list[0]: stock_symbol,
-        column_list[1]: market,
-        column_list[2]: today_date
-    }
+    if date_in == '':
+        search_dict = {
+            column_list[0]: stock_symbol,
+            column_list[1]: market,
+        }
+    else:
+        search_dict = {
+            column_list[0]: stock_symbol,
+            column_list[1]: market,
+            column_list[2]: date_in
+        }
 
     col_hide_dict = {
         "_id": 0,
@@ -244,36 +250,47 @@ def main(market, stock_symbol):
 
     json_obj = json.dumps(error_msg)
 
+    print('search in db, before scrapping from web')
     data_from_db = dbo.read_n_stocks_rating(search_dict, 1, col_hide_dict)
 
     if not bool(data_from_db):
+        print('no ratings available in DB, scrapping from web')
+
         # if not present in db, get the data via web
         df = scrape_web(market, stock_symbol)
 
         if df is None:
             print('no data available for stock_symbol: ', stock_symbol)
         else:
-            overall_ratings = calculate_overall_ratings(df)
+            print(df)
+            df_new = df.copy()
+            df_new.insert(0, "stockSymbol", stock_symbol, True)
+            df_new.insert(1, "marketPlace", market, True)
+            df_new.insert(2, "refreshData", today_date, True)
+            print(df_new)
 
-            df.reset_index(inplace=True)
-            data_dict_df = df.to_dict("records")
-            print(data_dict_df)
-
-            result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
-            df_result = pd.DataFrame(result, columns=column_list)
-
-            df_result.reset_index(inplace=True)
-            result_doc = df_result.to_dict("records")
-
-            dbo.insert_ratings_db(result_doc);
-
-            json_obj = df_result.to_json(orient='records', date_format='iso')
+            df_new.reset_index(inplace=True)
+            result_doc = df_new.to_dict("records")
+            dbo.insert_ratings_db(stock_symbol, result_doc)
 
             print('data read from webscrapper')
     else:
-        result_doc = data_from_db
-        json_obj = json.dumps(result_doc)
+        df_new = pd.DataFrame.from_records(data_from_db)
+        print(df_new)
         print('data read from db')
+
+    df = df_new.drop(columns=['stockSymbol', 'marketPlace', 'refreshData'])
+
+    overall_ratings = calculate_overall_ratings(df)
+
+    df.reset_index(inplace=True)
+    data_dict_df = df.to_dict("records")
+
+    print(df)
+    result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
+    df_result = pd.DataFrame(result, columns=column_list)
+
+    json_obj = df_result.to_json(orient='records', date_format='iso')
 
     # print(json_obj)
     return json_obj

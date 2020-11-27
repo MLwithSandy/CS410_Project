@@ -31,7 +31,7 @@
 
 .search-area {
   grid-area: b;
-  display: grid;
+  display: flex;
   height: 100%;
   margin: auto 10px;
   grid-gap: 20px;
@@ -79,12 +79,63 @@
   border-radius: 30px;
   justify-self: center ;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
-  font-size: 30px;
+  font-size: 24px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
   padding-left: 25px;
   /*outline: 3px solid red;*/
 }
 
+.ui-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 18px;
+  text-align: left;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+
+.ui-autocomplete > li > div {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.42857143;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.ui-state-hover,
+.ui-state-active,
+.ui-state-focus {
+  text-decoration: none;
+  color: #262626;
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.ui-helper-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
 
 .search-btn {
   width: 15vh;
@@ -126,7 +177,7 @@
   display: grid;
   width: 200px;
   height: 260px;
-  margin: 20px auto;
+  margin: 20px 50px;
   border-radius: 25px;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
   place-content: center;
@@ -140,8 +191,25 @@
 
 .result-img-one {
   grid-area: 2;
-  display: grid;
-  background: url('/assets/images/rainy-day.svg') no-repeat;
+  display: flex;
+  flex-direction: column;
+  /*background: url('/assets/images/HOLD.svg') no-repeat;*/
+  width: 100%;
+  height: 100%;
+  /*border-radius: 50px;*/
+  background-size: 100%;
+  margin: auto auto;
+  /*place-content: center;*/
+
+  /*background-position: 0%;*/
+  /*outline: 3px solid red;*/
+}
+
+.rating-img-one {
+  /*grid-area: 2;*/
+  background: no-repeat;
+  /*display: flex;*/
+  /*background-color: white;*/
   width: 80px;
   height: 80px;
   border-radius: 50px;
@@ -149,8 +217,15 @@
   margin: auto auto;
   place-content: center;
 
-  /*background-position: 0%;*/
+  /*background-position: 50%;*/
   /*outline: 3px solid red;*/
+}
+
+.rd{
+  align-self: flex-end;
+  margin-bottom: 0px;
+  margin-right: 5px;
+  font-size: x-small;
 }
 
 .result-label-one {
@@ -180,7 +255,7 @@
 }
 
 .result-btn-one {
-  background-color: green;
+  /*background-color: green;*/
 }
 
 
@@ -265,20 +340,35 @@ mat-header-cell {
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
 }
 
+.reco-container{
+  grid-area: c;
+  display: grid;
+  grid-template:
+  "r1" 0.5fr
+  "r2" 4.0fr
+;
+}
 
+.p3 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
+  font-size: 25px;
+  margin: 30px 20px;
+  color: darkslategray;
+  justify-self: flex-start;
+}
 
 .card-container {
-  grid-area: c;
+  grid-area: r2;
   display: flex;
+  align-content: center;
   justify-content: center;
   /*background-color: green;*/
-  margin: auto 10px;
-
+  margin: 20px 10px;
 }
 
 .card-base {
-  width: 350px;
-  height: 500px;
+  width: 200px;
+  height: 300px;
   margin: 50px;
   border-radius: 40px;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
@@ -296,75 +386,64 @@ mat-header-cell {
 }
 
 .content {
-  padding: 35px 35px;
-  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
-
-
+}
+.content-header {
+  padding-top: 20px;
+  font-size: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
 }
 
 
 .img-one {
-  background: url('/assets/images/p2.jpg') no-repeat;
-  width: 350px;
-  height: 300px;
+  /*background: url('/assets/images/p2.jpg') no-repeat;*/
+  display: flex;
+  width: 200px;
+  height: 200px;
   border-radius: 40px;
   background-size: 150%;
   /*background-position: 0%;*/
+  place-content: center;
+
+}
+
+.reco-img-one {
+  /*grid-area: 2;*/
+  background: no-repeat;
+  display: flex;
+  background-color: white;
+  width: 120px;
+  height:120px;
+  border-radius: 60px;
+  background-size: 60%;
+  margin: auto auto;
+  place-content: center;
+
+  background-position: 50%;
+  /*outline: 3px solid red;*/
 }
 
 .btn-base {
   display: flex;
-  width: 260px;
-  height: 50px;
+  width: 120px;
+  height: 40px;
   border-radius: 40px;
   margin: 0 auto;
   margin-top: -25px;
-  font-size: 18px;
+  font-size: 16px;
   justify-content: center;
   /*align-items: center;*/
   align-items: flex-end;
   color: white;
 }
 
-.btn-one {
-  background-color: green;
-}
+/*.btn-one {*/
+/*  background-color: green;*/
+/*}*/
 
-.card-two {
-  background-color: #E4E4E4;
-}
-
-
-.img-two {
-  background: url('/assets/images/p1.jpg') no-repeat;
-  width: 350px;
-  height: 300px;
-  border-radius: 40px;
-  background-size: 150%;
-  /*background-position: 0%;*/
-}
-
-.btn-two {
-  background-color: orange;
-}
-
-.card-three {
-  background-color: #B7E0FF;
-}
-
-.img-three {
-  background: url('/assets/images/p3.jpg') no-repeat;
-  width: 350px;
-  height: 300px;
-  border-radius: 40px;
-  background-size: 150%;
-  /*background-position: 0%;*/
-}
-
-.btn-three {
-  background-color: red;
-}
 
 
 /*.grafico {*/
@@ -379,7 +458,7 @@ mat-header-cell {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 250px;
+  height: 300px;
 }
 
 .grafico .content span{
@@ -406,9 +485,14 @@ mat-header-cell {
 }
 
 .grafico .legends span{
-  width: 60px;
-  margin: 0px 20px;
-  background-color: darkred;
+  /*display: flex;*/
+  /*flex-direction: row;*/
+
+  /*width: 100%;*/
+
+  /*width: 60px;*/
+  /*margin: 0px 20px;*/
+  /*background-color: darkred;*/
 
 }
 
@@ -433,7 +517,21 @@ mat-header-cell {
   box-shadow: 0 4px 17px rgba(0, 0, 0, 0.20);
 }
 
+
+
 @media (max-width: 1350px) {
+
+  .search-area{
+    flex-direction: column;
+  }
+
+  .result-panel{
+    flex-direction: column;
+  }
+  .data-card-container{
+    flex-direction: column;
+
+  }
   .card-container{
     flex-direction: column;
   }
