@@ -1,6 +1,8 @@
 <script src="home.component.ts"></script>
 <div class="home">
 
+  <!--  header area-->
+
   <div class="header-area">
     <div class="header-class">
       <p>
@@ -8,74 +10,76 @@
       </p>
     </div>
   </div>
-  <div class="search-area">
-    <div class="search">
+
+  <!--  search, result and related data area-->
+
+  <div class="search-result-area border-top-style border-btm-style">
+    <div class="search-rating-area">
       <div class="search-form">
 <!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
         <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
         <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
       </div>
-      <div class="search-result">
+      <div class="overall-rating-area">
         <p class="p2">
           Overall Rating
         </p>
-        <div class="result-panel">
-          <div class="result-card-base result-card-one">
-            <div class="result-label-one">
+        <div class="result-rating-panel">
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
               <p>
                 Analyst Rating
               </p>
             </div>
-            <div class="result-img-one">
-              <div class="rating-img-one" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
-              <p class="rd" *ngIf="ratingsList?.refreshData">
-                reresh: {{ratingsList?.refreshData | date:'mediumDate'}}
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+              <p class="refresh-date-style" *ngIf="ratingsList?.refreshData">
+                refresh: {{ratingsList?.refreshData | date:'mediumDate'}}
               </p>
             </div>
-            <div class="result-btn-base result-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
               <p>{{ratingsList?.overallRating}}</p>
             </div>
           </div>
-          <div class="result-card-base result-card-one">
-            <div class="result-label-one">
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
               <p>
                 Twitter Sentiments
               </p>
             </div>
-            <div class="result-img-one">
-              <div class="rating-img-one" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
             </div>
-            <div class="result-btn-base result-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
               <p>{{ratingsList?.sentiment.sentiment}}</p>
             </div>
           </div>
-          <div class="result-card-base result-card-one">
-            <div class="result-label-one">
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
               <p>
                 Overall Rating
               </p>
             </div>
-            <div class="result-img-one">
-              <div class="rating-img-one" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
             </div>
-            <div class="result-btn-base result-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
               <p>{{ratingsList?.combinedRating}}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="data-area">
-    <div class="data-area-header">
-    <p class="p2">
-      Analyst Ratings
-    </p>
-    </div>
-    <div class="data-card-container">
-
-      <div class="rating-chart data-card-base">
-        <div class="grafico">
-          <div class="content">
+    <div class="analyst-rating-tweets-area">
+      <div class="analyst-rating-tweets-area-hdr">
+        <p class="p2">
+          Analyst ratings & latest Tweets
+        </p>
+      </div>
+      <div class="analyst-rating-tweets-container">
+        <div class="rating-chart-card">
+          <div class="grafico">
+          <div class="reco-card-content">
             <div class="bars" *ngFor="let item of List">
               <span>{{item.value}}</span>
               <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
@@ -83,47 +87,42 @@
               <span>{{item.legend}}</span>
             </div>
           </div>
-          <!--<div class="line"></div>-->
-<!--          <div class="legends">-->
-<!--            <span *ngFor="let item of List">{{item.legend}}</span>-->
-<!--          </div>-->
+        </div>
+        </div>
+        <div class="rating-list-card">
+          <mat-table class="ratings-table mat-elevation-z8" [dataSource]="dataSource">
+
+            <ng-container matColumnDef="ratingDate">
+              <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+              <mat-cell class="rating-date-cell"
+                *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAgency">
+              <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
+              <mat-cell class="rating-agency-cell"
+                        *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
+
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAssigned">
+              <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
+              <mat-cell class="rating-cell"
+                        *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
+          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
         </div>
       </div>
-
-      <div class="rating-list">
-        <mat-table class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
-
-          <ng-container matColumnDef="ratingDate">
-            <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-            <mat-cell class="rating-date-cell"
-              *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="ratingAgency">
-            <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
-            <mat-cell class="rating-agency-cell"
-                      *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
-
-          </ng-container>
-
-          <ng-container matColumnDef="ratingAssigned">
-            <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
-            <mat-cell class="rating-cell"
-                      *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
-          </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-
-        </mat-table>
-        <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
-      </div>
     </div>
-
   </div>
 
-  </div>
+  <!--  Recommendation area-->
+
   <div class="reco-container">
     <div class="reco-container-one">
       <div class="p3">
@@ -131,20 +130,20 @@
           Similar stocks
         </p>
       </div>
-      <div class="card-container">
+      <div class="reco-card-area">
         <ng-container *ngFor="let reco of recoList">
-          <div class="card-base card-one">
-            <div class="img-one" [style.background-image]="'url(/assets/images/' + reco.bgImg + ')'">
-              <div class="reco-img-one" [style.background-image]="'url(' + reco.cardImg + ')'"></div>
+          <div class="reco-card-base reco-card-one">
+            <div class="reco-card-bg-img" [style.background-image]="'url(/assets/images/' + reco.bgImg + ')'">
+              <div class="reco-card-img" [style.background-image]="'url(' + reco.cardImg + ')'"></div>
             </div>
-            <div class="btn-base btn-one" [style.background-color]="reco.btnColor">
+            <div class="reco-card-btn-base reco-card-btn-one" [style.background-color]="reco.btnColor">
               <p>{{reco.rating}}</p>
             </div>
             <div>
-              <p class="content content-header">
+              <p class="reco-card-content reco-card-content-hdr">
                 {{reco.stockSymbol}}
               </p>
-              <p class="content">
+              <p class="reco-card-content">
                 {{reco.stockName}}
               </p>
             </div>
@@ -158,12 +157,12 @@
           Related Tweets
         </p>
       </div>
-      <div class="tweet-list">
+      <div class="tweet-list-area">
         <mat-table class="tweets-table mat-elevation-z8" [dataSource]="tweetList">
 
           <ng-container matColumnDef="Tweets">
             <mat-header-cell *matHeaderCellDef>Tweets</mat-header-cell>
-            <mat-cell class="rating-date-cell"
+            <mat-cell class="tweet-cell"
                       *matCellDef="let twt">{{twt.toString()}}</mat-cell>
           </ng-container>
 
@@ -172,9 +171,7 @@
           <mat-row *matRowDef="let row; columns: displayedColumnsTweets"></mat-row>
 
         </mat-table>
-<!--        <mat-paginator [pageSizeOptions]="[3]"></mat-paginator>-->
       </div>
-
     </div>
   </div>
 </div>
