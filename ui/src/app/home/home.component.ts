@@ -51,12 +51,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   List: RatingsChartModel[];
 
   dataSource = new MatTableDataSource();
+  tweetList = new MatTableDataSource();
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   // displayedColumns = ['ratingDate', 'stockSymbol', 'ratingAgency', 'ratingAssigned'];
   displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
+  displayedColumnsTweets = ['Tweets'];
 
   constructor(private httpClient: HttpClient, private stockListService: StockListService) {
     // Get the user data from users.json
@@ -90,6 +92,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.tweetList.paginator = this.paginator;
+    this.tweetList.sort = this.sort;
   }
 
   getRequestLog(): void {
@@ -146,15 +150,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this.getSentiments().subscribe(
           res => {
-              // console.log('res:' , res);
-              const senti = new TwitterSentiment();
-              senti.stockSymbol = res.stockSymbol;
-              senti.refreshDate = res.refreshDate;
-              senti.sentimentClass = res.sentiment;
-              const index = Constants.SENTIMENT_SCALE.findIndex(x => x === res.sentiment);
+              console.log('res:' , res);
+              let senti;
+              senti = new TwitterSentiment();
+              senti.stockSymbol = res[0].stockSymbol;
+              senti.refreshDate = res[0].refreshDate;
+              senti.sentimentClass = res[0].sentiment;
+              const index = Constants.SENTIMENT_SCALE.findIndex(x => x === res[0].sentiment);
               senti.sentiment = Constants.SENTIMENT[index];
+              senti.tweets = [];
+              for ( let i = 0; i < res.length; i++) {
+                senti.tweets[i] = res[i].tweets;
+                // console.log('senti.tweets', senti.tweets[i]);
+              }
+
               this.ratingsList.sentiment = senti;
               // console.log('this.ratingsList.sentiment: ', this.ratingsList.sentiment);
+
+              this.tweetList.data = [];
+              this.tweetList.data = this.ratingsList.sentiment.tweets;
+
               this.getSentimentCardStyle();
               this.getOverallRating();
               this.getOverallCardStyle();

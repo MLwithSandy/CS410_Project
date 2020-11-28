@@ -3,4 +3,5 @@ export class TwitterSentiment{
   refreshDate: string;
   sentimentClass: number;
   sentiment: string;
+  tweets: string[];
 }

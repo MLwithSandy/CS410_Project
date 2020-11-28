@@ -1,3 +1,4 @@
+<script src="home.component.ts"></script>
 <div class="home">
 
   <div class="header-area">
@@ -98,12 +99,6 @@
               *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
           </ng-container>
 
-<!--            <ng-container matColumnDef="ratingDate">-->
-<!--              <mat-header-cell *matHeaderCellDef>Stock</mat-header-cell>-->
-<!--              <mat-cell class="rating-date-cell"-->
-<!--                        *matCellDef="let rating">{{rating.stockSymbol}}</mat-cell>-->
-<!--            </ng-container>-->
-
           <ng-container matColumnDef="ratingAgency">
             <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
             <mat-cell class="rating-agency-cell"
@@ -130,6 +125,7 @@
 
   </div>
   <div class="reco-container">
+    <div class="reco-container-one">
       <div class="p3">
         <p>
           Similar stocks
@@ -155,5 +151,30 @@
           </div>
         </ng-container>
       </div>
+    </div>
+    <div class="reco-container-two">
+      <div class="p3">
+        <p>
+          Related Tweets
+        </p>
+      </div>
+      <div class="tweet-list">
+        <mat-table class="tweets-table mat-elevation-z8" [dataSource]="tweetList">
+
+          <ng-container matColumnDef="Tweets">
+            <mat-header-cell *matHeaderCellDef>Tweets</mat-header-cell>
+            <mat-cell class="rating-date-cell"
+                      *matCellDef="let twt">{{twt.toString()}}</mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumnsTweets"></mat-header-row>
+
+          <mat-row *matRowDef="let row; columns: displayedColumnsTweets"></mat-row>
+
+        </mat-table>
+<!--        <mat-paginator [pageSizeOptions]="[3]"></mat-paginator>-->
+      </div>
+
+    </div>
   </div>
 </div>

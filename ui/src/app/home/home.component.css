@@ -300,6 +300,9 @@
 
 mat-header-cell {
   /*width: 50px;*/
+  place-content: center;
+  font-weight: bolder;
+  font-stretch: extra-expanded;
 }
 
 .mat-table {
@@ -342,12 +345,21 @@ mat-header-cell {
 
 .reco-container{
   grid-area: c;
+  margin: 20px 10px;
+  display: grid;
+  grid-template-columns: 3.2fr 1.8fr;
+}
+
+.reco-container-one{
   display: grid;
   grid-template:
-  "r1" 0.5fr
-  "r2" 4.0fr
-;
+  "rc11" 0.5fr
+  "rc12" 4.0fr
+  ;
+  /*outline: 3px solid red;*/
+
 }
+
 
 .p3 {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, SansSerif;
@@ -358,7 +370,7 @@ mat-header-cell {
 }
 
 .card-container {
-  grid-area: r2;
+  grid-area: rc12;
   display: flex;
   align-content: center;
   justify-content: center;
@@ -369,7 +381,7 @@ mat-header-cell {
 .card-base {
   width: 200px;
   height: 300px;
-  margin: 50px;
+  margin: 30px;
   border-radius: 40px;
   box-shadow: 2px 2px 22px rgba(0, 0, 0, 0.2);
 }
@@ -440,19 +452,25 @@ mat-header-cell {
   color: white;
 }
 
-/*.btn-one {*/
-/*  background-color: green;*/
-/*}*/
 
+.reco-container-two{
+  display: grid;
+  grid-template:
+  "rc21" 0.5fr
+  "rc22" 4.0fr
+;
+  /*outline: 3px solid red;*/
 
+}
 
-/*.grafico {*/
-/*  background-color: black;*/
-/*  align-self: center;*/
-/*  height: 100%;*/
-/*  width: 100%;*/
+.tweet-list{
+  grid-area: rc22;
+  display: grid;
+  width: 80%;
+  place-self: center;
+  /*outline: 3px solid red;*/
+}
 
-/*}*/
 
 .grafico .content{
   display: flex;

@@ -106,12 +106,11 @@ def stocks_all():
 @app.route("/stock/sentiments/<market>/<stock_symbol>")
 @cross_origin()
 def stocks_sentiment(market, stock_symbol):
-    sentiment_resp = getSentimentFromBackend(market, stock_symbol)
+    resp = getSentimentFromBackend(market, stock_symbol)
 
-    print('sentiment_resp: ', sentiment_resp)
-    resp = json.dumps(sentiment_resp)
-
-    return Response(resp, mimetype='text/plain')
+    print('sentiment_resp: ', resp)
+    response = resp.to_json(orient='records')
+    return Response(response, mimetype='text/plain')
 
 
 @app.route("/stock/recommendation/list")
@@ -193,14 +192,15 @@ def getSentimentFromBackend(market, stock_symbol):
     else:
         tweets_fetched = tweets_fetched[:5]
 
-    sentiment = {
-            "stockSymbol": stock_symbol,
-            "refreshDate": today_date,
-            "sentiment": sentiment,
-            "listOfTweets": json.dumps(tweets_fetched)
-    }
+    df_tweets = pd.DataFrame(tweets_fetched, columns=['tweets'])
 
-    return sentiment
+    # df_tweets_resp = pd.DataFrame(columns=['stockSymbol', 'refreshDate', 'sentiment'])
+    # df_tweets_resp = df_tweets_resp.append({'stockSymbol': stock_symbol, 'refreshDate': today_date, 'sentiment':  sentiment}, ignore_index=True)
+    df_tweets.insert(0, "stockSymbol", stock_symbol, True)
+    df_tweets.insert(1, "refreshDate", today_date, True)
+    df_tweets.insert(2, "sentiment", sentiment, True)
+
+    return df_tweets
 
 
 @app.route("/stock/recommendation/<stock_symbol>")
