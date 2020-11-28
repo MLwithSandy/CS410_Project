@@ -3,8 +3,9 @@
 }
 .navbar{
   display: grid;
-  background-color: darkslategray;
-  height: 100%;
+  /*background-color: darkslategray;*/
+  background: rgb(0,29,36);
+  background: linear-gradient(81deg, rgba(0,29,36,1) 0%, rgba(9,121,101,1) 37%, rgba(170,225,235,1) 100%);
 }
 
 .navbar-brand{

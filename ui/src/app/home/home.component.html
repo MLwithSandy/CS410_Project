@@ -24,7 +24,7 @@
         <p class="p2">
           Overall Rating
         </p>
-        <div class="result-rating-panel">
+        <div class="rating-container">
           <div class="rating-card-base rating-card-one">
             <div class="rating-card-label">
               <p>
@@ -95,7 +95,7 @@
             <ng-container matColumnDef="ratingDate">
               <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
               <mat-cell class="rating-date-cell"
-                *matCellDef="let rating">{{rating.ratingDate}}</mat-cell>
+                *matCellDef="let rating">{{rating.ratingDate | date:'shortDate'}}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="ratingAgency">
@@ -115,7 +115,22 @@
 
             <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
           </mat-table>
-          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>
+<!--          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>-->
+        </div>
+        <div class="tweet-list-card">
+          <mat-table class="tweets-table mat-elevation-z8" [dataSource]="tweetList">
+
+            <ng-container matColumnDef="Tweets">
+              <mat-header-cell *matHeaderCellDef>Tweets</mat-header-cell>
+              <mat-cell class="tweet-cell"
+                        *matCellDef="let twt">{{twt.toString()}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumnsTweets"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: displayedColumnsTweets"></mat-row>
+
+          </mat-table>
         </div>
       </div>
     </div>
@@ -125,7 +140,7 @@
 
   <div class="reco-container">
     <div class="reco-container-one">
-      <div class="p3">
+      <div class="p2">
         <p>
           Similar stocks
         </p>
@@ -149,28 +164,6 @@
             </div>
           </div>
         </ng-container>
-      </div>
-    </div>
-    <div class="reco-container-two">
-      <div class="p3">
-        <p>
-          Related Tweets
-        </p>
-      </div>
-      <div class="tweet-list-area">
-        <mat-table class="tweets-table mat-elevation-z8" [dataSource]="tweetList">
-
-          <ng-container matColumnDef="Tweets">
-            <mat-header-cell *matHeaderCellDef>Tweets</mat-header-cell>
-            <mat-cell class="tweet-cell"
-                      *matCellDef="let twt">{{twt.toString()}}</mat-cell>
-          </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumnsTweets"></mat-header-row>
-
-          <mat-row *matRowDef="let row; columns: displayedColumnsTweets"></mat-row>
-
-        </mat-table>
       </div>
     </div>
   </div>
