@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="0.0.1"
+version="0.0.2"
 
 echo $version
 docker image build -t skr8050/sre-frontend:$version .
