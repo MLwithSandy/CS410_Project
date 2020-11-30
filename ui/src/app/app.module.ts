@@ -16,13 +16,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HomeComponent } from './home/home.component';
 import { P404Component } from './p404/p404.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {StockListService} from './services/StockList.Service';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,8 @@ import {StockListService} from './services/StockList.Service';
     MatCardModule,
     MatToolbarModule,
     MatButtonModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
     FlexLayoutModule,
     HttpClientModule,
     AppRoutingModule,

@@ -1,21 +1,21 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {LogData} from '../model/logData';
 import {HttpClient} from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
 import {RatingsModel} from '../model/ratings.model';
 import {RatingsChartModel} from '../model/ratingsChart.model';
-import {AnalystsRating} from '../model/analystsRating';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {FormControl} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {RatingsCardModel} from '../model/ratings-card.model';
 import {Constants} from '../model/Constants.model';
 import {TwitterSentiment} from '../model/twitter-sentiment.model';
 import {StockListService} from '../services/StockList.Service';
 import {RecommendationModel} from '../model/recommendation.model';
 import {StockSectorModel} from '../model/stock-sector.model';
+import {Observable} from 'rxjs';
+
 
 declare var $: any;
 
@@ -28,8 +28,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   lstLogs: LogData[];
 
-  stockList: any[] = [];
-  stockList2: any;
 
   @Input()
   stockSymbol;
@@ -53,20 +51,40 @@ export class HomeComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource();
   tweetList = new MatTableDataSource();
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
+  filteredOptions: Observable<string[]>;
+
+  stockListResponse: any = [];
+  stockList2: any;
+  stockList: string[] = [];
+
+  filteredStockList: Observable<string[]>;
+  form: FormGroup;
+
+
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
 
   // displayedColumns = ['ratingDate', 'stockSymbol', 'ratingAgency', 'ratingAssigned'];
   displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
   displayedColumnsTweets = ['Tweets'];
 
-  constructor(private httpClient: HttpClient, private stockListService: StockListService) {
+  constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private stockListService: StockListService) {
     // Get the user data from users.json
+    // Market: "NASDAQ"
+    // Sector: "Consumer Services"
+    // "Security Name": "Comcast Corporation - Class A Common Stock"
+    // Symbol: "CMCSA"
     this.stockListService.getStockList().subscribe(
       data => {
-        Object.assign(this.stockList, data);
-        // console.log('data: ', data);
+        Object.assign(this.stockListResponse, data);
+        this.stockList =  this.stockListResponse.map(x => x.Symbol
+                          + ' - '
+                          + (x['Security Name'].split('-'))[0]);
+
         // console.log('this.stockList: ', this.stockList);
+
       },
       error => {
         console.log('Something wrong here');
@@ -76,9 +94,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    $('#stockSymbol').autocomplete({
-      source: this.stockList
-    });
+    // $('#stockSymbol').autocomplete({
+    //   source: this.stockList
+    // });
 
     this.ratingsCardModel = new RatingsCardModel();
     this.sentimentCardModel = new RatingsCardModel();
@@ -89,6 +107,28 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.recoList = [];
     this.stockSector = new StockSectorModel();
 
+    this.form = this.formBuilder.group({
+      stock: []
+    });
+
+    this.filteredStockList = this.form.get('stock').valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value.name),
+      map(name => name ? this._filter(name) : this.stockList.slice())
+    );
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    // console.log('filtervalue: ', filterValue);
+    // console.log('this.stockList: ', this.stockList);
+
+
+    const filteredList = this.stockList.filter(option =>
+      option.toString().toLowerCase().includes(filterValue));
+
+    // console.log('filteredList: ', filteredList);
+    return filteredList;
   }
 
   ngAfterViewInit(): void {
@@ -121,7 +161,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           source: this.stockList2,
           messages: {
             noResults: '',
-            results(): void { }
+            results(): void {
+            }
           }
         });
       }
@@ -140,11 +181,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
 
- getSearchResult(): void{
-   this.stockSymbol = (document.getElementById('stockSymbol') as HTMLInputElement).value.split(':')[0];
+  getSearchResult(stockSearched: string): void {
+    this.stockSymbol = (stockSearched.split('-'))[0];
 
-   // console.log('this.stockSymbol', this.stockSymbol);
-   this.getStockRating().subscribe(
+    console.log('this.stockSymbol', this.stockSymbol);
+    this.getStockRating().subscribe(
       result => {
         this.ratingsList = result[0];
         this.getRatingsCardStyle();
@@ -153,59 +194,59 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     );
 
-   this.getSentiments().subscribe(
-     res => {
-       console.log('res:' , res);
-       let senti;
-       senti = new TwitterSentiment();
-       senti.stockSymbol = res[0].stockSymbol;
-       senti.refreshDate = res[0].refreshDate;
-       senti.sentimentClass = res[0].sentiment;
-       const index = Constants.SENTIMENT_SCALE.findIndex(x => x === res[0].sentiment);
-       senti.sentiment = Constants.SENTIMENT[index];
-       senti.tweets = [];
-       for ( let i = 0; i < res.length; i++) {
-         senti.tweets[i] = res[i].tweets;
-         // console.log('senti.tweets', senti.tweets[i]);
-       }
+    this.getSentiments().subscribe(
+      res => {
+        console.log('res:', res);
+        let senti;
+        senti = new TwitterSentiment();
+        senti.stockSymbol = res[0].stockSymbol;
+        senti.refreshDate = res[0].refreshDate;
+        senti.sentimentClass = res[0].sentiment;
+        const index = Constants.SENTIMENT_SCALE.findIndex(x => x === res[0].sentiment);
+        senti.sentiment = Constants.SENTIMENT[index];
+        senti.tweets = [];
+        for (let i = 0; i < res.length; i++) {
+          senti.tweets[i] = res[i].tweets;
+          // console.log('senti.tweets', senti.tweets[i]);
+        }
 
-       this.ratingsList.sentiment = senti;
-       // console.log('this.ratingsList.sentiment: ', this.ratingsList.sentiment);
+        this.ratingsList.sentiment = senti;
+        // console.log('this.ratingsList.sentiment: ', this.ratingsList.sentiment);
 
-       this.tweetList.data = [];
-       this.tweetList.data = this.ratingsList.sentiment.tweets;
+        this.tweetList.data = [];
+        this.tweetList.data = this.ratingsList.sentiment.tweets;
 
-       this.getSentimentCardStyle();
-       this.getOverallRating();
-       this.getOverallCardStyle();
-     }
-   );
+        this.getSentimentCardStyle();
+        this.getOverallRating();
+        this.getOverallCardStyle();
+      }
+    );
 
-   this.getRecommendationList().subscribe(
-     res => {
-       this.recoList = res;
-       // console.log('this.recoList: ', this.recoList);
-       for ( let i = 0; i < this.recoList.length; i++) {
+    this.getRecommendationList().subscribe(
+      res => {
+        this.recoList = res;
+        // console.log('this.recoList: ', this.recoList);
+        for (let i = 0; i < this.recoList.length; i++) {
           this.recoList[i].bgImg = 'miscellaneous.jpg';
-          if (this.recoList[i].sector !== ''){
+          if (this.recoList[i].sector !== '') {
             this.recoList[i].bgImg = this.recoList[i].sector.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() + '.jpg';
           }
           this.recoList[i].cardImg = '/assets/images/' + this.recoList[i].rating + '.svg';
           this.recoList[i].btnColor =
-           (this.recoList[i].rating === 'BUY' ? Constants.COLOR[0]
-             : this.recoList[i].rating === 'HOLD' ? Constants.COLOR[1]
-               : Constants.COLOR[2]);
-       }
-     }
-   );
+            (this.recoList[i].rating === 'BUY' ? Constants.COLOR[0]
+              : this.recoList[i].rating === 'HOLD' ? Constants.COLOR[1]
+                : Constants.COLOR[2]);
+        }
+      }
+    );
   }
 
 
-  getRatingForChart(): void{
+  getRatingForChart(): void {
     this.List = this.aggregatedRatingForChart(this.ratingsList);
   }
 
-  prepareRatingDataTable(): void{
+  prepareRatingDataTable(): void {
     this.dataSource.data = [];
 
     this.dataSource.data = this.ratingsList.analystsRatings;
@@ -214,7 +255,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // console.log(this.dataSource.data);
   }
 
-  getRatingsCardStyle(): void{
+  getRatingsCardStyle(): void {
     this.ratingsCardModel.imgPath = '/assets/images/' + this.ratingsList.overallRating + '.svg';
     this.ratingsCardModel.btnBgColor =
       (this.ratingsList.overallRating === 'BUY' ? Constants.COLOR[0]
@@ -222,13 +263,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
           : Constants.COLOR[2]);
   }
 
-  getSentimentCardStyle(): void{
+  getSentimentCardStyle(): void {
     const index = Constants.SENTIMENT.findIndex(x => x === this.ratingsList.sentiment.sentiment);
     this.sentimentCardModel.imgPath = '/assets/images/' + this.ratingsList.sentiment.sentiment + '.svg';
     this.sentimentCardModel.btnBgColor = Constants.COLOR[index];
   }
 
-  getOverallRating(): void{
+  getOverallRating(): void {
 
     let index = Constants.SENTIMENT.findIndex(x => x === this.ratingsList.sentiment.sentiment);
     const tempSentiment = Constants.SENTIMENT_SCALE[index];
@@ -237,14 +278,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const tempRating = Constants.RATING_SCALE[index];
 
     const resultRating = (tempSentiment + tempRating > 1 ? tempSentiment + tempRating - 1
-                          : tempSentiment + tempRating < -1 ? tempSentiment + tempRating + 1
-                          : tempSentiment + tempRating);
+      : tempSentiment + tempRating < -1 ? tempSentiment + tempRating + 1
+        : tempSentiment + tempRating);
 
     index = Constants.RATING_SCALE.findIndex(x => x === resultRating);
     this.ratingsList.combinedRating = Constants.RATING[index];
   }
 
-  getOverallCardStyle(): void{
+  getOverallCardStyle(): void {
     this.overallCardModel.imgPath = '/assets/images/' + this.ratingsList.combinedRating + '.svg';
     this.overallCardModel.btnBgColor =
       (this.ratingsList.combinedRating === 'BUY' ? Constants.COLOR[0]
@@ -252,54 +293,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
           : Constants.COLOR[2]);
   }
 
-  getStockRating(): any{
+  getStockRating(): any {
 
     // this.ratingsList = [];
 
     // console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/ratings/NASDAQ/' + this.stockSymbol)
-      .pipe(map((response: any) =>  response));
+      .pipe(map((response: any) => response));
 
   }
 
-  getCombinedRating(): any{
+  // getCombinedRating(): any {
+  //
+  //   // this.ratingsList = [];
+  //
+  //   // console.log('stockSymbol: ' + this.stockSymbol  );
+  //   return this.httpClient
+  //     .get('http://localhost:5000/stock/ratings/combined/NASDAQ/' + this.stockSymbol)
+  //     .pipe(map((response: any) => response));
+  //
+  // }
 
-    // this.ratingsList = [];
-
-    // console.log('stockSymbol: ' + this.stockSymbol  );
-    return this.httpClient
-      .get('http://localhost:5000/stock/ratings/combined/NASDAQ/' + this.stockSymbol)
-      .pipe(map((response: any) =>  response));
-
-  }
-
-  getSentiments(): any{
+  getSentiments(): any {
 
     // console.log('stockSymbol: ' + this.stockSymbol  );
     return this.httpClient
       .get('http://localhost:5000/stock/sentiments/NASDAQ/' + this.stockSymbol)
-      .pipe(map((response: any) =>  response));
+      .pipe(map((response: any) => response));
 
   }
 
-  getRecommendationList(): any{
+  getRecommendationList(): any {
 
-    console.log('stockSymbol: ' + this.stockSymbol  );
+    console.log('stockSymbol: ' + this.stockSymbol);
     return this.httpClient
       .get('http://localhost:5000/stock/recommendation/' + this.stockSymbol)
-      .pipe(map((response: any) =>  response));
+      .pipe(map((response: any) => response));
 
   }
 
-  getStockSector($stockSymbol): any{
-
-    // console.log('stockSymbol: ' + $stockSymbol );
-    return this.httpClient
-      .get('http://localhost:5000/stock/sector/' + $stockSymbol)
-      .pipe(map((response: any) =>  response));
-
-  }
+  // getStockSector($stockSymbol): any {
+  //
+  //   // console.log('stockSymbol: ' + $stockSymbol );
+  //   return this.httpClient
+  //     .get('http://localhost:5000/stock/sector/' + $stockSymbol)
+  //     .pipe(map((response: any) => response));
+  //
+  // }
 
 
   aggregatedRatingForChart($ratingsModel): RatingsChartModel[] {
@@ -311,8 +352,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     ];
 
     // Calculate the sums and group data (while tracking count)
-    const reduced = $ratingsModel.analystsRatings.reduce( (m, d) => {
-      if (!m[d.scaledRatings]){
+    const reduced = $ratingsModel.analystsRatings.reduce((m, d) => {
+      if (!m[d.scaledRatings]) {
         m[d.scaledRatings] = {rating: d.scaledRatings, count: 1};
         return m;
       }
@@ -322,13 +363,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }, {});
 
     for (const x in reduced) {
-      if (x === 'BUY'){
+      if (x === 'BUY') {
         tempList[2].value = reduced[x].count;
       }
-      if (x === 'HOLD'){
+      if (x === 'HOLD') {
         tempList[1].value = reduced[x].count;
       }
-      if (x === 'SELL'){
+      if (x === 'SELL') {
         tempList[0].value = reduced[x].count;
       }
     }

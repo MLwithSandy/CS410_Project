@@ -17,8 +17,24 @@
     <div class="search-rating-area">
       <div class="search-form">
 <!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
-        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">
-        <button type="submit" class="search-btn" (click)="getSearchResult()">Search</button>
+<!--        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">-->
+        <form class="example-form search-input" [formGroup]="form">
+          <mat-form-field class="example-full-width">
+            <mat-label>Select stock</mat-label>
+
+            <input #stockSearched type="text"
+                   matInput=""
+                   formControlName="stock"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let stock of filteredStockList | async" [value]="stock">
+                {{stock}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </form>
+
+        <button type="submit" class="search-btn" (click)="getSearchResult(stockSearched.value)">Search</button>
       </div>
       <div class="overall-rating-area">
         <p class="p2">
