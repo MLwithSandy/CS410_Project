@@ -388,9 +388,14 @@
 
 }
 
+.rating-cell{
+  display: flex;
+  place-content: center;
+}
+
 .mat-form-field {
-  font-size: 12px;
-  width: 100%;
+  font-size: 18px;
+  width: 96%;
 }
 
 .mat-header-cell {
@@ -419,11 +424,6 @@
 .mat-row:nth-child(odd) {
   background: rgba(210,224,227,1);
   color: black;
-}
-
-.rating-cell{
-  display: flex;
-  place-content: center;
 }
 
 .mat-paginator {

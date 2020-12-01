@@ -18,9 +18,10 @@
       <div class="search-form">
 <!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
 <!--        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">-->
-        <form class="example-form search-input" [formGroup]="form">
-          <mat-form-field class="example-full-width">
-            <mat-label>Select stock</mat-label>
+        <form class="srch-form search-input" [formGroup]="form">
+          <mat-form-field class="srch-form-field">
+            <mat-icon matSuffix>search</mat-icon>
+<!--            <mat-label>Select stock</mat-label>-->
 
             <input #stockSearched type="text"
                    matInput=""

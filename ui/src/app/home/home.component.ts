@@ -26,37 +26,23 @@ declare var $: any;
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
-  lstLogs: LogData[];
-
-
-  @Input()
-  stockSymbol;
-
-  // ratingsList: RatingsModel[];
+  stockSymbol = '';
 
   ratingsList: RatingsModel;
-  ratingsCardModel: RatingsCardModel;
-  sentimentCardModel: RatingsCardModel;
-  overallCardModel: RatingsCardModel;
 
-  recoList: RecommendationModel[];
+  ratingsCardModel: RatingsCardModel = new RatingsCardModel();
+  sentimentCardModel: RatingsCardModel = new RatingsCardModel();
+  overallCardModel: RatingsCardModel = new RatingsCardModel();
+
+  recoList: RecommendationModel[] = [];
   stockSector: StockSectorModel;
 
-  lastkeydown1 = 0;
-  lastkeydown2 = 0;
-  subscription: any;
-
-  List: RatingsChartModel[];
+  List: RatingsChartModel[] = [];
 
   dataSource = new MatTableDataSource();
   tweetList = new MatTableDataSource();
 
-  myControl = new FormControl();
-  options: string[] = ['One', 'Two', 'Three'];
-  filteredOptions: Observable<string[]>;
-
   stockListResponse: any = [];
-  stockList2: any;
   stockList: string[] = [];
 
   filteredStockList: Observable<string[]>;
@@ -66,49 +52,31 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
 
-  // displayedColumns = ['ratingDate', 'stockSymbol', 'ratingAgency', 'ratingAssigned'];
   displayedColumns = ['ratingDate', 'ratingAgency', 'ratingAssigned'];
   displayedColumnsTweets = ['Tweets'];
 
   constructor(private httpClient: HttpClient, private formBuilder: FormBuilder, private stockListService: StockListService) {
-    // Get the user data from users.json
-    // Market: "NASDAQ"
-    // Sector: "Consumer Services"
-    // "Security Name": "Comcast Corporation - Class A Common Stock"
-    // Symbol: "CMCSA"
+
+  }
+
+
+  ngOnInit(): void {
+
     this.stockListService.getStockList().subscribe(
       data => {
         Object.assign(this.stockListResponse, data);
         this.stockList =  this.stockListResponse.map(x => x.Symbol
-                          + ' - '
-                          + (x['Security Name'].split('-'))[0]);
-
-        // console.log('this.stockList: ', this.stockList);
+          + ' - '
+          + (x['Security Name'].split('-'))[0]);
 
       },
       error => {
         console.log('Something wrong here');
       });
 
-  }
-
-
-  ngOnInit(): void {
-    // $('#stockSymbol').autocomplete({
-    //   source: this.stockList
-    // });
-
-    this.ratingsCardModel = new RatingsCardModel();
-    this.sentimentCardModel = new RatingsCardModel();
-    this.overallCardModel = new RatingsCardModel();
-    this.ratingsList = new RatingsModel();
-    this.ratingsList.sentiment = new TwitterSentiment();
-    this.ratingsList.analystsRatings = [];
-    this.recoList = [];
-    this.stockSector = new StockSectorModel();
 
     this.form = this.formBuilder.group({
-      stock: []
+      stock: ['AAPL - Apple Inc.']
     });
 
     this.filteredStockList = this.form.get('stock').valueChanges.pipe(
@@ -116,16 +84,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
       map(value => typeof value === 'string' ? value : value.name),
       map(name => name ? this._filter(name) : this.stockList.slice())
     );
+
+    this.getSearchResult('AAPL');
   }
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     // console.log('filtervalue: ', filterValue);
     // console.log('this.stockList: ', this.stockList);
-
-
     const filteredList = this.stockList.filter(option =>
-      option.toString().toLowerCase().includes(filterValue));
+      (option.toString().toLowerCase().indexOf(filterValue) === 0 || option.toString().toLowerCase().includes(filterValue)));
 
     // console.log('filteredList: ', filteredList);
     return filteredList;
@@ -138,48 +106,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.tweetList.sort = this.sort;
 
   }
-
-  getRequestLog(): void {
-    this.httpClient
-      .get('http://localhost:5000/requests/all')
-      .pipe(map((response: any) => response))
-      .subscribe(result => {
-        this.lstLogs = result;
-      });
-  }
-
-  // tslint:disable-next-line:typedef
-  getStockSymbol($event) {
-
-    const stockId = (document.getElementById('stockSymbol') as HTMLInputElement).value;
-
-    if (stockId.length > 2) {
-      if ($event.timeStamp - this.lastkeydown2 > 200) {
-        this.stockList2 = this.searchFromArray(this.stockList, stockId);
-
-        $('#stockSymbol').autocomplete({
-          source: this.stockList2,
-          messages: {
-            noResults: '',
-            results(): void {
-            }
-          }
-        });
-      }
-    }
-  }
-
-  // tslint:disable-next-line:typedef
-  searchFromArray(arr, regex) {
-    const matches = [];
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].match(regex)) {
-        matches.push(arr[i]);
-      }
-    }
-    return matches;
-  }
-
 
   getSearchResult(stockSearched: string): void {
     this.stockSymbol = (stockSearched.split('-'))[0];
@@ -196,7 +122,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     this.getSentiments().subscribe(
       res => {
-        console.log('res:', res);
+        // console.log('res:', res);
         let senti;
         senti = new TwitterSentiment();
         senti.stockSymbol = res[0].stockSymbol;
@@ -210,7 +136,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
           // console.log('senti.tweets', senti.tweets[i]);
         }
 
-        this.ratingsList.sentiment = senti;
+        this.ratingsList.sentiment = new TwitterSentiment();
+        this.ratingsList.sentiment =  senti;
         // console.log('this.ratingsList.sentiment: ', this.ratingsList.sentiment);
 
         this.tweetList.data = [];
@@ -304,17 +231,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   }
 
-  // getCombinedRating(): any {
-  //
-  //   // this.ratingsList = [];
-  //
-  //   // console.log('stockSymbol: ' + this.stockSymbol  );
-  //   return this.httpClient
-  //     .get('http://localhost:5000/stock/ratings/combined/NASDAQ/' + this.stockSymbol)
-  //     .pipe(map((response: any) => response));
-  //
-  // }
-
   getSentiments(): any {
 
     // console.log('stockSymbol: ' + this.stockSymbol  );
@@ -332,16 +248,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
       .pipe(map((response: any) => response));
 
   }
-
-  // getStockSector($stockSymbol): any {
-  //
-  //   // console.log('stockSymbol: ' + $stockSymbol );
-  //   return this.httpClient
-  //     .get('http://localhost:5000/stock/sector/' + $stockSymbol)
-  //     .pipe(map((response: any) => response));
-  //
-  // }
-
 
   aggregatedRatingForChart($ratingsModel): RatingsChartModel[] {
 
