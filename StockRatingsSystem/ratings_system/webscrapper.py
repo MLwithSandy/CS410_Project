@@ -100,6 +100,8 @@ def scale_ratings(ratings):
         "SECTOR WEIGHT": 0,
         "PEER PERFORM": 0,
         "EQUAL WEIGHT": 0,
+        "IN-LINE": 0,
+        "MARKET OUTPERFORM": 1,
         "OUTPERFORM": 1,
         "MODERATE BUY": 1,
         "ACCUMULATE": 1,
