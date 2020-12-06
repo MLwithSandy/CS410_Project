@@ -255,11 +255,16 @@ def getRecommendationList(stock_symbol):
 
     # print(nasdaqDF.head(5))
 
-    ratingList = ['BUY', 'SELL', 'HOLD']
+    ratingDict = {
+        -1: 'SELL',
+        0: 'HOLD',
+        1: 'BUY'
+    }
+
     stock_df = pd.DataFrame(columns=['seq', 'stockSymbol', 'stockName', 'sector', 'rating'])
 
     stock_df['stockSymbol'] = recoDF['Symbol']
-    stock_df['rating'] = recoDF['analyst_rating']
+    stock_df['rating'] = recoDF['analyst_rating'].map(lambda x: ratingDict[x])
     stock_df['stockName'] = nasdaqDF['Security Name']
     stock_df['sector'] = nasdaqDF['Sector']
 

@@ -54,7 +54,14 @@ def main():
 
     nasdaqList = pd.read_csv(filePath/'nasdaq/nasdaq_result_list.csv', sep=',', header=0, engine='python')
     # print('nasdaqList: ', nasdaqList.head(5))
+
+    # remove stocks in exception list
+    exceptionDF = pd.read_csv(filePath/'nasdaq/exceptionList.csv', sep=',', header=0, engine='python')
+    stock_df_wo_rating = pd.merge(nasdaqList, exceptionDF, how='inner', on=['Symbol', 'Symbol'])
+    nasdaqList = pd.concat([nasdaqList, stock_df_wo_rating, stock_df_wo_rating]).drop_duplicates(keep=False)
+
     nasdaqSymbolList = nasdaqList['Symbol']
+
     df = pd.read_csv(filePath/'nasdaq/2018_Financial_Data.csv', index_col=0)
     print('df shape: ', df.shape)
     df['Symbol'] = df.index
