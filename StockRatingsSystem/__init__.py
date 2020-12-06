@@ -16,8 +16,10 @@ from ratings_system import tinydbops as dbo
 from nasdaq import listStocks as lst
 
 from TwitterSentimentAnalysis import sentimentAnalysis as sa
+from recommender_system import recommender as reco
 
 import pandas as pd
+import numpy as np
 
 # create an instance of Flask
 app = Flask(__name__)
@@ -67,15 +69,16 @@ def request_log_all():
 
 # read all ratings from db
 
-@app.route("/stock/ratings/all")
-@cross_origin()
-def stocks_ratings_all():
-    # read all ratings from db
-    _items = dbo.read_all_ratings_db()
-    # items = [item for item in _items]
-    resp = dumps(_items)
+# @app.route("/stock/ratings/all")
+# @cross_origin()
+# def stocks_ratings_all():
+#     # read all ratings from db
+#     _items = dbo.read_all_ratings_db()
+#     # items = [item for item in _items]
+#     resp = dumps(_items)
+#
+#     return Response(resp, mimetype='text/bytes')
 
-    return Response(resp, mimetype='text/bytes')
 
 # read all ratings from db
 
@@ -83,7 +86,18 @@ def stocks_ratings_all():
 @cross_origin()
 def stocks_all():
     listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    exceptionDF = pd.read_csv('nasdaq/exceptionList.csv', sep=',', header=0, engine='python')
+
     stock_df = pd.DataFrame(listOfStocks)
+
+    stock_df_wo_rating = pd.merge(stock_df, exceptionDF, how='inner', on=['Symbol', 'Symbol'])
+    print("stock_df shpe: ", stock_df.shape)
+    print("shape: ", stock_df_wo_rating.shape)
+
+    stock_df = pd.concat([stock_df, stock_df_wo_rating, stock_df_wo_rating]).drop_duplicates(keep=False)
+
+    print("stock_df shpe: ", stock_df.shape)
+
     stock_df.insert(2, "Market", "NASDAQ", True)
 
     response = stock_df.to_json(orient='records')
@@ -186,8 +200,8 @@ def getSentimentFromBackend(market, stock_symbol):
 
     sentiment = sa.getSentiment(stock_symbol)
     tweets_fetched = sa.getTweets(stock_symbol)
-    
-    if (len(tweets_fetched)<=5):
+
+    if (len(tweets_fetched) <= 5):
         print(len(tweets_fetched))
     else:
         tweets_fetched = tweets_fetched[:5]
@@ -203,9 +217,7 @@ def getSentimentFromBackend(market, stock_symbol):
     return df_tweets
 
 
-@app.route("/stock/recommendation/<stock_symbol>")
-@cross_origin()
-def getRecommendationList(stock_symbol):
+def getRecommendationList_Test(stock_symbol):
     listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
     RatingList = ['BUY', 'SELL', 'HOLD'];
     stock_df = pd.DataFrame(columns=['seq', 'stockSymbol', 'stockName', 'sector', 'rating'])
@@ -218,10 +230,44 @@ def getRecommendationList(stock_symbol):
         stock_df = stock_df.append(
             {'seq': x + 1
                 , 'stockSymbol': listOfStocks.iloc[randomRow, 0]
-                , 'stockName': ('' if isNaN(listOfStocks.iloc[randomRow, 1]) else listOfStocks.iloc[randomRow, 1].split('-')[0].strip())
+                , 'stockName': (
+                '' if isNaN(listOfStocks.iloc[randomRow, 1]) else listOfStocks.iloc[randomRow, 1].split('-')[0].strip())
                 , 'sector': ('' if isNaN(listOfStocks.iloc[randomRow, 2]) else listOfStocks.iloc[randomRow, 2])
                 , 'rating': RatingList[randomRating]}
             , ignore_index=True)
+
+    response = stock_df.to_json(orient='records')
+    return Response(response, mimetype='text/plain')
+
+
+@app.route("/stock/recommendation/<stock_symbol>")
+@cross_origin()
+def getRecommendationList(stock_symbol):
+    listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
+    listOfStocks.set_index('Symbol', inplace=True)
+
+    # print(listOfStocks.head(5))
+    recoDF = reco.main(stock_symbol)
+    recoList = recoDF['Symbol'].values.tolist()
+
+    xrow = listOfStocks.index.isin(recoList)
+    nasdaqDF = listOfStocks[xrow]
+
+    # print(nasdaqDF.head(5))
+
+    ratingList = ['BUY', 'SELL', 'HOLD']
+    stock_df = pd.DataFrame(columns=['seq', 'stockSymbol', 'stockName', 'sector', 'rating'])
+
+    stock_df['stockSymbol'] = recoDF['Symbol']
+    stock_df['rating'] = recoDF['analyst_rating']
+    stock_df['stockName'] = nasdaqDF['Security Name']
+    stock_df['sector'] = nasdaqDF['Sector']
+
+    stock_df.reset_index(level=None, drop=False, inplace=True, col_level=0, col_fill='')
+
+    stock_df['seq'] = stock_df.index
+
+    print(stock_df.head(5))
 
     response = stock_df.to_json(orient='records')
     return Response(response, mimetype='text/plain')
@@ -231,7 +277,8 @@ def getRecommendationList(stock_symbol):
 @cross_origin()
 def listOfStocks():
     listOfStocks = lst.main('nasdaq/nasdaq_result_list.csv')
-    listOfStocks_res = listOfStocks['Symbol'] + ': ' + listOfStocks['Security Name'].map(lambda x: x.split('-')[0].strip())
+    listOfStocks_res = listOfStocks['Symbol'] + ': ' + listOfStocks['Security Name'].map(
+        lambda x: x.split('-')[0].strip())
     print(listOfStocks[0:5])
     response = listOfStocks_res.to_json()
     return Response(response, mimetype='text/plain')
@@ -246,6 +293,7 @@ def getStockSector(stock_symbol):
     response = df.to_json(orient='records');
 
     return Response(response, mimetype='text/plain')
+
 
 def isNaN(string):
     return string != string

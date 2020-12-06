@@ -1,4 +1,5 @@
 import json
+import pathlib
 
 from bs4 import BeautifulSoup
 from flask import jsonify, make_response
@@ -11,14 +12,22 @@ import pandas as pd
 # from ratings_system import dboperations as dbo
 from ratings_system import tinydbops as dbo
 
+filePath = pathlib.Path(__file__).parent.absolute()
+print('filePath=', filePath)
+
 
 # create a webdriver object and set options for headless browsing
 def load_webdriver():
-    options = webdriver.ChromeOptions()
-    options.add_argument('--no-sandbox')
-    options.add_argument('--headless')
-    options.add_argument("--disable-dev-shm-usage");
-    driver = webdriver.Chrome(chrome_options=options)
+    if str(filePath).find("CS410") == -1:
+        options = webdriver.ChromeOptions()
+        options.add_argument('--no-sandbox')
+        options.add_argument('--headless')
+        options.add_argument("--disable-dev-shm-usage")
+        driver = webdriver.Chrome(chrome_options=options)
+    else:
+        options = Options()
+        options.headless = True
+        driver = webdriver.Chrome(filePath / 'chromedriver', options=options)
     return driver
 
 
@@ -33,7 +42,11 @@ def get_js_soup(url_web, driver):
         print("redirected URL : " + redirected_url)
         new_url = redirected_url + "price-target/"
         print("new URL for Analysts rating : " + new_url)
-        driver.get(url_web)
+
+        if new_url.find('NASDAQ/price-target/') == -1:
+            driver.get(url_web)
+        else:
+            return
     else:
         print("URL for Analysts rating: " + redirected_url)
 
@@ -50,6 +63,9 @@ def get_js_soup(url_web, driver):
 
 
 def remove_script(soup_obj):
+    if soup_obj is None:
+        return
+
     for script in soup_obj(["script", "style"]):
         script.decompose()
     return soup_obj
@@ -71,13 +87,17 @@ def scale_ratings(ratings):
         "STRONG SELL": -1,
         "BEARISH": -1,
         "UNDERPERFORM": -1,
+        "SECTOR UNDERPERFORM": -1,
         "MODERATE SELL": -1,
         "WEAK HOLD": -1,
         "UNDERWEIGHT": -1,
         "REDUCE": -1,
         "HOLD": 0,
         "NEUTRAL": 0,
+        "AVERAGE": 0,
         "MARKET PERFORM": 0,
+        "SECTOR PERFORM": 0,
+        "SECTOR WEIGHT": 0,
         "PEER PERFORM": 0,
         "EQUAL WEIGHT": 0,
         "OUTPERFORM": 1,
@@ -89,8 +109,11 @@ def scale_ratings(ratings):
         "ADD": 1,
         "BULLISH": 1,
         "BUY": 1,
+        "POSITIVE": 1,
         "STRONG BUY": 1,
-        "TOP PICK": 1
+        "TOP PICK": 1,
+        "CONVICTION-BUY": 1,
+        "OUTPERFORMER": 1
     }
 
     if ratings.upper() in ratings_dict:
@@ -143,6 +166,10 @@ def scrape_web(market, stock_symbol):
     # get soup object using web url and web driver
     soup_obj = get_js_soup(url_mb, web_driver)
 
+    if soup_obj is None:
+        print(stock_symbol + ": No table found for market analyst rating - incorrect url")
+        return
+
     # clean soup object - remove scripts
     soup_obj = remove_script(soup_obj)
 
@@ -153,8 +180,15 @@ def scrape_web(market, stock_symbol):
     dropped_columns = ["Date [MM/dd/YYYY]", "Action", "Price target", "Price impact"]
 
     table = soup_obj.find("table", attrs={"class": "scroll-table sort-table fixed-left-column fixed-header"})
+
     if table is None:
-        print("No table found for market analyst rating")
+        table = soup_obj.find("table", attrs={"class": "scroll-table sort-table fixed-header"})
+
+    if table is None:
+        table = soup_obj.find("table", attrs={"class": "scroll-table sort-table"})
+
+    if table is None:
+        print(stock_symbol + ": No table found for market analyst rating")
     else:
         table_body = table.find('tbody')
         rows = table_body.find_all('tr')
@@ -166,6 +200,12 @@ def scrape_web(market, stock_symbol):
         # create dataframe for ease-of-processing
         # drop records with None
         df = pd.DataFrame(data).dropna();
+
+        if len(df.columns) < 6:
+            print(stock_symbol + ": No table found for market analyst rating, col < 6")
+            return
+
+        print(df.head(5))
         df.columns = data_header
         # add new column with date
         df['ratingDate'] = pd.to_datetime(df['Date [MM/dd/YYYY]'],
@@ -191,6 +231,9 @@ def scrape_web(market, stock_symbol):
 
         if df_current_month_desc.empty:
             df_current_month_desc = df_rel[last_month_mask].sort_values(by=['ratingDate'], ascending=False)
+
+        if df_current_month_desc.empty or df_current_month_desc.shape[0] < 5:
+            df_current_month_desc = df_rel.sort_values(by=['ratingDate'], ascending=False)
 
         # move date column as first column first
         cols = list(df_current_month_desc)
@@ -253,6 +296,8 @@ def main(market, stock_symbol, date_in):
     print('search in db, before scrapping from web')
     data_from_db = dbo.read_n_stocks_rating(search_dict, 1, col_hide_dict)
 
+    df_new = None
+
     if not bool(data_from_db):
         print('no ratings available in DB, scrapping from web')
 
@@ -276,21 +321,24 @@ def main(market, stock_symbol, date_in):
             print('data read from webscrapper')
     else:
         df_new = pd.DataFrame.from_records(data_from_db)
-        print(df_new)
+        # print(df_new)
         print('data read from db')
 
-    df = df_new.drop(columns=['stockSymbol', 'marketPlace', 'refreshData'])
+    if df_new is not None:
+        df = df_new.drop(columns=['stockSymbol', 'marketPlace', 'refreshData'])
 
-    overall_ratings = calculate_overall_ratings(df)
+        overall_ratings = calculate_overall_ratings(df)
 
-    df.reset_index(inplace=True)
-    data_dict_df = df.to_dict("records")
+        df.reset_index(inplace=True)
+        data_dict_df = df.to_dict("records")
 
-    print(df)
-    result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
-    df_result = pd.DataFrame(result, columns=column_list)
+        # print(df)
+        result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
+        df_result = pd.DataFrame(result, columns=column_list)
 
-    json_obj = df_result.to_json(orient='records', date_format='iso')
+        json_obj = df_result.to_json(orient='records', date_format='iso')
+    else:
+        json_obj = ''
 
     # print(json_obj)
     return json_obj
@@ -300,3 +348,4 @@ if __name__ == '__main__':
     market = "NASDAQ"
     stock_symbol = "AAPL"
     main(market, stock_symbol)
+
