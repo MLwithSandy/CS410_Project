@@ -13,6 +13,10 @@ def stock_list_t(stockFirstChar):
 
     relevantStocks = []
 
+    # input is a stock symbol and not starting character
+    if len(stockFirstChar) > 1:
+        relevantStocks = [stockFirstChar]
+
     if stockFirstChar.isalnum():
         for item in listOfStocks:
             if item[0].lower() == stockFirstChar and item not in exceptionList:
@@ -36,7 +40,7 @@ def main():
     today_date = str(date.today())
 
     for stock in stock_list:
-        print('stock: ', stock)
+        print('stock: ', stock, "today_date: ", today_date)
         ws.main('NASDAQ', stock, today_date)
     return
 

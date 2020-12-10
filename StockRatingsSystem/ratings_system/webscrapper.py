@@ -295,7 +295,7 @@ def main(market, stock_symbol, date_in):
 
     json_obj = json.dumps(error_msg)
 
-    print('search in db, before scrapping from web')
+    print('search in db, before scrapping from web, search_dict: ', search_dict)
     data_from_db = dbo.read_n_stocks_rating(search_dict, 1, col_hide_dict)
 
     df_new = None
@@ -327,6 +327,8 @@ def main(market, stock_symbol, date_in):
         print('data read from db')
 
     if df_new is not None:
+        refreshDate = df_new['refreshData'].iloc[0]
+
         df = df_new.drop(columns=['stockSymbol', 'marketPlace', 'refreshData'])
 
         overall_ratings = calculate_overall_ratings(df)
@@ -335,7 +337,7 @@ def main(market, stock_symbol, date_in):
         data_dict_df = df.to_dict("records")
 
         # print(df)
-        result = [[stock_symbol, market, today_date, overall_ratings, data_dict_df]]
+        result = [[stock_symbol, market, refreshDate, overall_ratings, data_dict_df]]
         df_result = pd.DataFrame(result, columns=column_list)
 
         json_obj = df_result.to_json(orient='records', date_format='iso')

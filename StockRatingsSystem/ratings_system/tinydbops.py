@@ -65,7 +65,7 @@ def insert_ratings_db(stock_symbol, data_dict):
 def read_n_stocks_rating(search_dict, no_items, col_hide_dict):
     q = Query()
 
-    refreshData = ''
+    refreshDataCriteria = ''
 
     if 'stockSymbol' in search_dict.keys():
         stockSymbolCriteria = search_dict['stockSymbol']
@@ -85,7 +85,8 @@ def read_n_stocks_rating(search_dict, no_items, col_hide_dict):
 
     ratings_db = TinyDB(dbFilePath)
 
-    if refreshData > '':
+    if refreshDataCriteria > '':
+        print('refreshDate: ', refreshDataCriteria)
         _items = ratings_db.search((q.stockSymbol == stockSymbolCriteria) & (q.marketPlace == marketPlaceCriteria) & (
                 q.refreshData == refreshDataCriteria))
     else:
