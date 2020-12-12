@@ -1,0 +1,36 @@
+:host {
+  display: grid;
+}
+.navbar{
+  display: grid;
+  /*background-color: darkslategray;*/
+  background: rgb(0,29,36);
+  background: linear-gradient(81deg, rgba(0,29,36,1) 0%, rgba(9,121,101,1) 37%, rgba(170,225,235,1) 100%);
+}
+
+.navbar-brand{
+  display: grid;
+  grid-template-columns: 1fr 9fr;
+}
+
+
+img{
+  display: grid;
+  place-content: center;
+  width: 50px;
+  height: 50px;
+  grid-row: 1;
+  grid-column: 1;
+
+}
+
+h1{
+  display: grid;
+  align-content: center;
+  padding-left: 10px;
+  grid-row: 1;
+  grid-column: 2;
+  font-size: xx-large;
+  color: forestgreen;
+  height: 100%;
+}

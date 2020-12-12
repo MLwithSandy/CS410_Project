@@ -1,0 +1,11 @@
+version: '3.4'
+
+services: 
+    ratings:
+        build: .
+        volumes:
+            - .:/usr/src/app
+        ports:
+            - 5000:80
+
+

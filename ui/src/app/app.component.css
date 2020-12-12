@@ -1,0 +1,30 @@
+:host {
+  background-color: whitesmoke;
+
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+
+  grid-template-rows: 1fr 8.8fr 0.2fr;
+}
+
+
+.navbarContainer {
+  grid-row: 1;
+}
+
+div {
+  grid-row: 2;
+  margin-top: 10px;
+}
+
+
+
+.footer{
+  display: grid;
+  grid-row: 3;
+  padding-top: 10px;
+
+  place-content: center;
+  font-size: smaller;
+}

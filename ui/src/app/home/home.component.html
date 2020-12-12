@@ -1,0 +1,187 @@
+<script src="home.component.ts"></script>
+<div class="home">
+
+  <!--  header area-->
+
+  <div class="header-area">
+    <div class="header-class">
+      <p>
+        Stock Recommendation Engine
+      </p>
+    </div>
+  </div>
+
+  <!--  search, result and related data area-->
+
+  <div class="search-result-area border-top-style border-btm-style">
+    <div class="search-rating-area">
+      <div class="search-form">
+<!--        <input class="search-input" type="text" name="stockSymbol" [(ngModel)]="stockSymbol" ngDefaultControl>-->
+<!--        <input class="search-input form-control" type="text" name="stockSymbol" id="stockSymbol" (keyup)="getStockSymbol($event)">-->
+        <form class="srch-form search-input" [formGroup]="form">
+          <mat-form-field class="srch-form-field">
+            <mat-icon matSuffix>search</mat-icon>
+<!--            <mat-label>Select stock</mat-label>-->
+
+            <input #stockSearched type="text"
+                   matInput=""
+                   formControlName="stock"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let stock of filteredStockList | async" [value]="stock">
+                {{stock}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </form>
+
+        <button type="submit" class="search-btn" (click)="getSearchResult(stockSearched.value)">Search</button>
+      </div>
+      <div class="overall-rating-area">
+        <p class="p2">
+          Overall Rating
+        </p>
+        <div class="rating-container">
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
+              <p>
+                Analyst Rating
+              </p>
+            </div>
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + ratingsCardModel?.imgPath + ')'"></div>
+              <p class="refresh-date-style" *ngIf="ratingsList?.refreshData">
+                refresh: {{ratingsList?.refreshData | date:'mediumDate'}}
+              </p>
+            </div>
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="ratingsCardModel?.btnBgColor">
+              <p>{{ratingsList?.overallRating}}</p>
+            </div>
+          </div>
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
+              <p>
+                Twitter Sentiments
+              </p>
+            </div>
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + sentimentCardModel?.imgPath + ')'"></div>
+            </div>
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="sentimentCardModel?.btnBgColor">
+              <p>{{ratingsList?.sentiment.sentiment}}</p>
+            </div>
+          </div>
+          <div class="rating-card-base rating-card-one">
+            <div class="rating-card-label">
+              <p>
+                Overall Rating
+              </p>
+            </div>
+            <div class="rating-card-img">
+              <div class="rating-card-bg-img" [style.background-image]="'url(' + overallCardModel?.imgPath + ')'"></div>
+            </div>
+            <div class="rating-card-btn rating-card-btn-one" [style.background-color]="overallCardModel?.btnBgColor">
+              <p>{{ratingsList?.combinedRating}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="analyst-rating-tweets-area">
+      <div class="analyst-rating-tweets-area-hdr">
+        <p class="p2">
+          Analyst ratings & latest Tweets
+        </p>
+      </div>
+      <div class="analyst-rating-tweets-container">
+        <div class="rating-chart-card">
+          <div class="grafico">
+          <div class="reco-card-content">
+            <div class="bars" *ngFor="let item of List">
+              <span>{{item.value}}</span>
+              <div class="bar" [style.background-color]="item.color" [style.height]='item.size'></div>
+              <p></p>
+              <span>{{item.legend}}</span>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="rating-list-card">
+          <mat-table class="ratings-table mat-elevation-z8" [dataSource]="dataSource">
+
+            <ng-container matColumnDef="ratingDate">
+              <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+              <mat-cell class="rating-date-cell"
+                *matCellDef="let rating">{{rating.ratingDate | date:'shortDate'}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAgency">
+              <mat-header-cell *matHeaderCellDef>Rating Agency</mat-header-cell>
+              <mat-cell class="rating-agency-cell"
+                        *matCellDef="let rating">{{rating.ratingAgency}}</mat-cell>
+
+            </ng-container>
+
+            <ng-container matColumnDef="ratingAssigned">
+              <mat-header-cell *matHeaderCellDef>Rating</mat-header-cell>
+              <mat-cell class="rating-cell"
+                        *matCellDef="let rating">{{rating.ratingAssigned}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
+<!--          <mat-paginator [pageSizeOptions]="[5]"></mat-paginator>-->
+        </div>
+        <div class="tweet-list-card">
+          <mat-table class="tweets-table mat-elevation-z8" [dataSource]="tweetList">
+
+            <ng-container matColumnDef="Tweets">
+              <mat-header-cell *matHeaderCellDef>Tweets</mat-header-cell>
+              <mat-cell class="tweet-cell"
+                        *matCellDef="let twt">{{twt.toString()}}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumnsTweets"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: displayedColumnsTweets"></mat-row>
+
+          </mat-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  Recommendation area-->
+
+  <div class="reco-container">
+    <div class="reco-container-one">
+      <div class="p2">
+        <p>
+          Similar stocks
+        </p>
+      </div>
+      <div class="reco-card-area">
+        <ng-container *ngFor="let reco of recoList">
+          <div class="reco-card-base reco-card-one">
+            <div class="reco-card-bg-img" [style.background-image]="'url(/assets/images/' + reco.bgImg + ')'">
+              <div class="reco-card-img" [style.background-image]="'url(' + reco.cardImg + ')'"></div>
+            </div>
+            <div class="reco-card-btn-base reco-card-btn-one" [style.background-color]="reco.btnColor">
+              <p>{{reco.rating}}</p>
+            </div>
+            <div>
+              <p class="reco-card-content reco-card-content-hdr">
+                {{reco.stockSymbol}}
+              </p>
+              <p class="reco-card-content">
+                {{reco.stockName}}
+              </p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

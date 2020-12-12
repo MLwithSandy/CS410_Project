@@ -1,0 +1,9 @@
+services:
+  angular-service:
+    container_name: sre-ui
+    build: .
+    volumes:
+    - . :/usr/src/app
+    ports:
+    - 8080:80
+
