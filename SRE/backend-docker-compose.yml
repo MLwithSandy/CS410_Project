@@ -2,6 +2,6 @@ version: '3.4'
 
 services:
     backend:
-        image: skr8050/sre-backend:0.0.3
+        image: skr8050/sre-backend:0.0.4
         ports:
             - 5000:80

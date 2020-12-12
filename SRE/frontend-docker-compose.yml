@@ -2,6 +2,6 @@ version: '3.4'
 
 services:
         ui:
-          image: skr8050/sre-frontend:0.0.3
+          image: skr8050/sre-frontend:0.0.4
           ports:
               - 8080:80
