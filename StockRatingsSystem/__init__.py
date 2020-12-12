@@ -225,14 +225,20 @@ def getRecommendationList_Test(stock_symbol):
     for x in range(0, 5):
         randomRow = random.randint(1, len(listOfStocks))
         randomRating = random.randint(0, 2)
-        print('Random: ', randomRow, randomRating, RatingList[randomRating], listOfStocks.iloc[randomRow, 0],
+        print('reco: ',
+              randomRow,
+              randomRating,
+              RatingList[randomRating],
+              ('' if isNaN(listOfStocks.iloc[randomRow, 1])
+               else listOfStocks.iloc[randomRow, 1].tostring().split('-')[0].strip()),
               listOfStocks.iloc[randomRow, 2])
         stock_df = stock_df.append(
             {'seq': x + 1
                 , 'stockSymbol': listOfStocks.iloc[randomRow, 0]
-                , 'stockName': (
-                '' if isNaN(listOfStocks.iloc[randomRow, 1]) else listOfStocks.iloc[randomRow, 1].split('-')[0].strip())
-                , 'sector': ('' if isNaN(listOfStocks.iloc[randomRow, 2]) else listOfStocks.iloc[randomRow, 2])
+                , 'stockName': ('' if isNaN(listOfStocks.iloc[randomRow, 1])
+                                else listOfStocks.iloc[randomRow, 1].split('-')[0].strip())
+                , 'sector': ('' if isNaN(listOfStocks.iloc[randomRow, 2])
+                             else listOfStocks.iloc[randomRow, 2])
                 , 'rating': RatingList[randomRating]}
             , ignore_index=True)
 
@@ -265,7 +271,7 @@ def getRecommendationList(stock_symbol):
 
     stock_df['stockSymbol'] = recoDF['Symbol']
     stock_df['rating'] = recoDF['analyst_rating'].map(lambda x: ratingDict[x])
-    stock_df['stockName'] = nasdaqDF['Security Name']
+    stock_df['stockName'] = nasdaqDF['Security Name'].map(lambda x: x.split('-')[0].strip())
     stock_df['sector'] = nasdaqDF['Sector']
 
     stock_df.reset_index(level=None, drop=False, inplace=True, col_level=0, col_fill='')

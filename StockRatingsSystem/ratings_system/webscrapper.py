@@ -141,20 +141,26 @@ def ratings_assignment(average_rating):
 # calculate overall rating
 
 def calculate_overall_ratings(df_calc):
-    # df_temp = df_calc.copy();
+    # df_calc = df_temp.copy();
 
     # scale ratings from various analysts on scale of {-1, 0, 1}
     df_calc['newRatings'] = df_calc['ratingAssigned'].map(lambda x: scale_ratings(x))
 
-    # average rating
-    average_rating = round(df_calc['newRatings'].mean(), 0)
+    # overall rating by voting
+    sum_ratings = df_calc['newRatings'].sum()
+    overall_rating_scaled = 0
+
+    if sum_ratings > 0:
+        overall_rating_scaled = 1
+    if sum_ratings < 0:
+        overall_rating_scaled = -1
 
     df_calc['scaledRatings'] = df_calc['newRatings'].map(lambda x: ratings_assignment(x))
 
-    df_calc.drop(columns=['newRatings'])
+    # df_calc.drop(columns=['newRatings'])
 
-    # rating assignment
-    overall_ratings = ratings_assignment(average_rating)
+    # rating assignment to BUY, SELL or HOLD
+    overall_ratings = ratings_assignment(overall_rating_scaled)
     return overall_ratings
 
 
@@ -354,4 +360,3 @@ if __name__ == '__main__':
     market = "NASDAQ"
     stock_symbol = "AAPL"
     main(market, stock_symbol)
-
